@@ -1,7 +1,7 @@
 import sys
 import easygui as gui
 
-from basicOperations import *
+from operations import *
 
 def main():
     while True:
