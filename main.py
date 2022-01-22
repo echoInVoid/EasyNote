@@ -1,19 +1,25 @@
+import logging as log
 import sys
-import easygui as gui
 
-from operations import *
+from PyQt5.QtWidgets import QApplication
+
+from myOperations import *
+from myWindows import myMain
+
+
+def setUp():
+    LOG_FORMAT = "[%(asctime)s][%(levelname)s] %(message)s"
+    log.basicConfig(filename='logs\\%s.log'%time.strftime(r"%Y%m%d-%Hh-%Mm"), level=log.INFO, format=LOG_FORMAT)
+
+    log.info("Set-Up completed.")
 
 def main():
-    while True:
-        operation = gui.buttonbox("执行操作", "简单笔记", ("写", "查看", "退出"), image="resource/welcome.gif")
-        if (operation == "写"):
-            write()
-        elif (operation == "查看"):
-            view()
-        else:
-            return
+    setUp()
 
+    app = QApplication(sys.argv)
+    mainWid = myMain()
+    mainWid.show()
+    sys.exit(app.exec_())
 
 if __name__ == "__main__":
     main()
-    sys.exit(0)
