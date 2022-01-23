@@ -2,9 +2,29 @@ import json
 import logging as log
 import time
 import os
-from myWindows import myWrite
+from myWindows import myViewAll, myWrite
 
-def save(title, text):
+def readNotesList():
+    noteList = []
+
+    if (not os.path.exists(".\\notes")):
+        log.warn("Folder '.\\notes' not found!")
+        return []
+    
+    for file in os.listdir(".\\notes"):
+        file = ".\\notes\\%s"%file
+        if (os.path.isfile(file)):
+            try:
+                with open(file, 'r') as f:
+                    note = json.load(f)
+            except:
+                log.error("%s is not a readable json file.")
+            else:
+                noteList.append(note)
+    
+    return noteList
+
+def save(title: str, text):
     if (not os.path.exists(".\\notes")):
         os.mkdir(".\\notes")
         log.warn("Folder '.\\notes' not found!")
@@ -23,4 +43,6 @@ def write():
     return writeWid
 
 def viewAll():
-    pass
+    viewWid = myViewAll()
+    viewWid.show()
+    return viewWid

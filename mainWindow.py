@@ -83,7 +83,7 @@ class UIMainWindow(object):
         self.edit.addAction(self.create)
         self.view = QtWidgets.QAction(self.MainWindow) #view all notes
         self.view.setObjectName("view")
-        #TODO: let user be able to view all notes
+        self.view.triggered.connect(oper.viewAll)
         self.edit.addAction(self.view)
         self.menubar.addAction(self.edit.menuAction())
         #set as menubar

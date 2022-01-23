@@ -11,7 +11,7 @@ import myOperations as oper
 
 
 class UIWriteWindow(object):
-    def setupUi(self, WriteWindow):
+    def setupUi(self, WriteWindow: QtWidgets.QWidget):
         self.WriteWindow = WriteWindow
         self.WriteWindow.setObjectName("WriteWindow")
         self.WriteWindow.resize(760, 600)
@@ -100,7 +100,7 @@ class UIWriteWindow(object):
         self.label_3.setText(_translate("WriteWindow", "内容"))
         
     def kill(self):
-        del self.WriteWindow
+        self.WriteWindow.destroy()
         del self
 
     def access(self):
