@@ -59,8 +59,9 @@ class UIWriteWindow(object):
         font.setPointSize(14)
         self.getTitle.setFont(font)
         self.getTitle.setObjectName("getTitle")
-        self.getTitle.setMaxLength(15)
+        self.getTitle.setMaxLength(50)
         self.getTitle.setPlaceholderText("输入标题（不超过50字符）")
+        self.getTitle.setClearButtonEnabled(True)
         self.verticalLayout.addWidget(self.getTitle)
 
         self.line_2 = QtWidgets.QFrame(self.verticalLayoutWidget)
@@ -84,7 +85,8 @@ class UIWriteWindow(object):
         font.setPointSize(14)
         self.getText.setFont(font)
         self.getText.setObjectName("getText")
-        self.getText.setPlaceholderText("输入标题（不超过400字符）")
+        self.getText.setPlaceholderText("输入正文")
+        self.getText.setUndoRedoEnabled(True)
         self.verticalLayout.addWidget(self.getText)
 
         self.retranslateUi(self.WriteWindow)

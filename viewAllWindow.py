@@ -5,13 +5,13 @@
 # Created by: PyQt5 UI code generator 5.15.4
 
 
-from re import search
+import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 import myOperations as oper
 
 
 class UI_viewAllWidget(object):
-    def setupUi(self, Widget):
+    def setupUi(self, Widget: QtWidgets.QWidget):
         self.Widget = Widget
         self.Widget.setObjectName("Widget")
         self.Widget.resize(760, 600)
@@ -63,8 +63,9 @@ class UI_viewAllWidget(object):
 
         #buttons
         self.operations = QtWidgets.QDialogButtonBox(self.centralWidget)
-        self.operations.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Open)
-        self.operations.clicked.connect
+        self.operations.setStandardButtons(QtWidgets.QDialogButtonBox.Open|QtWidgets.QDialogButtonBox.Cancel)
+        self.operations.accepted.connect(self.open)
+        self.operations.rejected.connect(self.kill)
         self.operations.setObjectName("operations")
         self.layout.addWidget(self.operations)
 
@@ -86,4 +87,14 @@ class UI_viewAllWidget(object):
         key = self.key.text()
         for note in notes:
             if key in note['title']:
-                QtWidgets.QListWidgetItem(note['title'], self.listWidget)
+                item = QtWidgets.QListWidgetItem(note['title'], self.listWidget)
+                filename = "%s_%s.json"%(note['title'], time.strftime(r"%Y%m%d_%H%M%S", tuple(note['time'])))
+                item.setData(5, filename)
+
+    def open(self):
+        if len(self.listWidget.selectedItems())==1:
+            oper.viewFile(self.listWidget.selectedItems()[0])
+
+    def kill(self):
+        self.Widget.destroy()
+        del self
