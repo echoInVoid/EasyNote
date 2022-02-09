@@ -1,4 +1,3 @@
-from asyncio.log import logger
 import json
 import logging as log
 import time
@@ -58,6 +57,21 @@ def viewFile(file):
 
         with open(filepath, 'r') as f:
             viewWid.setFile(json.loads(f.read()))
+
+        return viewWid
+
+    else:
+        log.error("File %s doesn't exist!"%filepath)
+        return None
+
+def reviewNote(file):
+    filepath = ".\\notes\\%s"%file
+    if os.path.exists(filepath) and os.path.isfile(filepath):
+        viewWid = myReview()
+        viewWid.show()
+
+        with open(filepath, 'r') as f:
+            viewWid.setupForm(json.loads(f.read()))
 
         return viewWid
 
