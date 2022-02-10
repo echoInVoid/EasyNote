@@ -78,6 +78,11 @@ class UI_viewAllWidget(object):
         self.review.setObjectName("review")
         self.review.clicked.connect(self.reviewNote)
         self.operations.addWidget(self.review)
+        # review history
+        self.reviewH = QtWidgets.QPushButton(self.centralWidget)
+        self.reviewH.setObjectName("review")
+        self.reviewH.clicked.connect(self.reviewHistory)
+        self.operations.addWidget(self.reviewH)
         # cancel button
         self.cancel = QtWidgets.QPushButton(self.centralWidget)
         self.cancel.setObjectName("cancel")
@@ -96,6 +101,7 @@ class UI_viewAllWidget(object):
         self.searchButton.setText(_translate("Widget", "搜索"))
         self.open_.setText(_translate("Widget", "打开"))
         self.review.setText(_translate("Widget", "复习"))
+        self.reviewH.setText(_translate("Widget", "复习历史"))
         self.cancel.setText(_translate("Widget", "取消"))
 
     def updateList(self):
@@ -119,6 +125,10 @@ class UI_viewAllWidget(object):
     def reviewNote(self):
         if len(self.listWidget.selectedItems()) == 1:
             self.reviewWid = oper.reviewNote(self.listWidget.selectedItems()[0].data(5))
+
+    def reviewHistory(self):
+        if len(self.listWidget.selectedItems()) == 1:
+            oper.showScore(self.listWidget.selectedItems()[0].data(5))
 
     def kill(self):
         self.Widget.destroy()

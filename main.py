@@ -16,10 +16,14 @@ def setUp():
 def main():
     setUp()
 
-    app = QApplication(sys.argv)
-    mainWid = myMain()
-    mainWid.show()
-    sys.exit(app.exec_())
+    try:
+        app = QApplication(sys.argv)
+        mainWid = myMain()
+        mainWid.show()
+        sys.exit(app.exec_())
+    except Exception as e:
+        log.fatal("\n\tFatal Error: %s\n\tProgram exited."%str(e))
+        sys.exit()
 
 if __name__ == "__main__":
     main()

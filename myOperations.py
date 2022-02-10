@@ -35,7 +35,8 @@ def save(title, text, ctime=time.localtime(time.time())):
     contain = {"title": title, "text": text, "time": tuple(ctime)}
     
     with open(".\\notes\\"+filename, 'w') as f:
-        json.dump(contain, f)
+        j = json.dumps(contain, sort_keys=True, indent=4, separators=(',', ':'))
+        f.write(j)
         log.info("Saved '%s' ."%filename)
     return 0
 
@@ -78,3 +79,41 @@ def reviewNote(file):
     else:
         log.error("File %s doesn't exist!"%filepath)
         return None
+
+
+def saveScore(title: str, score: int, ctime=time.localtime(time.time())):
+    if not os.path.isfile(".\\score.json"):
+        f = open(".\\score.json", "w")
+        f.write(r"{}")
+        f.close()
+    
+    with open(".\\score.json", 'r') as f:
+        a = json.loads(f.read())
+
+    with open('.\\score.json', 'w') as f:
+        if title not in a.keys():
+            a[title] = []
+        a[title].append([tuple(ctime), score])
+
+        j = json.dumps(a, sort_keys=True, indent=4, separators=(',', ':'))
+        f.write(j)
+
+def showScore(title):
+    if not os.path.isfile(".\\score.json"):
+        log.error("File score.json doesn't exist!")
+        return None
+
+    with open(".\\notes\\%s"%title, 'r') as f:
+        title = json.loads(f.read())["title"]
+
+    try:
+        with open(".\\score.json") as f:
+            scores = json.loads(f.read())[title]
+            log.info("Opened score record for '%s'."%title)
+    except KeyError:
+        log.error("No reviewing record for '%s'."%title)
+    
+    historyWid = myReviewHistory()
+    historyWid.setupNote(scores)
+    historyWid.show()
+    return historyWid
