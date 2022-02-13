@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import myOperations as oper
 
 
-class UI_viewAllWidget(object):
+class UIViewAllWindow(object):
     def setupUi(self, Widget: QtWidgets.QWidget):
         self.Widget = Widget
         self.Widget.setObjectName("Widget")

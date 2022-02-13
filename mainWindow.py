@@ -5,6 +5,7 @@
 # Created by: PyQt5 UI code generator 5.15.4
 
 
+import os
 import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 import myOperations as oper
@@ -66,14 +67,14 @@ class UIMainWindow(object):
         self.main = QtWidgets.QMenu(self.menubar) #main page (1st menu)
         self.main.setObjectName("main")
         self.menubar.addAction(self.main.menuAction())
-        #file
-        self.file = QtWidgets.QMenu(self.menubar) #about file (1st menu)
-        self.file.setObjectName("file")
-        self.importf = QtWidgets.QAction(self.MainWindow) #import note from file
-        self.importf.setObjectName("importf")
-        #TODO: let user be able to import notes from file/folder
-        self.file.addAction(self.importf)
-        self.menubar.addAction(self.file.menuAction())
+        # #file
+        # self.file = QtWidgets.QMenu(self.menubar) #about file (1st menu)
+        # self.file.setObjectName("file")
+        # # self.importf = QtWidgets.QAction(self.MainWindow) #import note from file
+        # # self.importf.setObjectName("importf")
+        # # #TODO: let user be able to import notes from file/folder
+        # # self.file.addAction(self.importf)
+        # self.menubar.addAction(self.file.menuAction())
         #edit
         self.edit = QtWidgets.QMenu(self.menubar) #edit note (1st menu)
         self.edit.setObjectName("edit")
@@ -98,7 +99,7 @@ class UIMainWindow(object):
         self.helpButton = QtWidgets.QPushButton(self.centralwidget)
         self.helpButton.setObjectName("helpButton")
         self.gridLayout.addWidget(self.helpButton, 2, 0, 1, 1)
-        # self.helpButton.clicked.connect() #TODO: write a help file
+        self.helpButton.clicked.connect(self.openHelp)
 
         #exit button
         self.exitButton = QtWidgets.QPushButton(self.centralwidget)
@@ -115,12 +116,14 @@ class UIMainWindow(object):
         self.welcomeText.setText(_translate("MainWindow", "欢迎!"))
         self.main.setTitle(_translate("MainWindow", "主页"))
         self.edit.setTitle(_translate("MainWindow", "编辑"))
-        self.file.setTitle(_translate("MainWindow", "文件"))
         self.create.setText(_translate("MainWindow", "创建笔记"))
         self.view.setText(_translate("MainWindow", "浏览笔记"))
-        self.importf.setText(_translate("MainWindow", "导入笔记"))
         self.exitButton.setText(_translate("MainWindow", "退出"))
         self.helpButton.setText(_translate("MainWindow", "帮助"))
 
     def updateClock(self):
         self.time.display(time.strftime("%H:%M:%S"))
+
+    def openHelp(self):
+        if os.path.isfile('..\\readme.html'):
+            os.system("..\\readme.html")

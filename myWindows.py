@@ -3,8 +3,8 @@ from PyQt5.QtWidgets import QMainWindow, QWidget
 from mainWindow import UIMainWindow
 from reviewHistoryWindow import UIReviewHistoryWindow
 from reviewWindow import UIReviewWindow
-from viewAllWindow import UI_viewAllWidget
-from viewOrEdit import Ui_EditWindow
+from viewAllWindow import UIViewAllWindow
+from viewOrEdit import UiEditWindow
 from writeWindow import UIWriteWindow
 
 class myMain(QMainWindow, UIMainWindow):
@@ -18,13 +18,13 @@ class myWrite(QWidget, UIWriteWindow):
         self.setWindowModality(0)
         self.setupUi(self)
 
-class myViewAll(QWidget, UI_viewAllWidget):
+class myViewAll(QWidget, UIViewAllWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowModality(0)
         self.setupUi(self)
 
-class myEdit(QWidget, Ui_EditWindow):
+class myEdit(QWidget, UiEditWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowModality(0)

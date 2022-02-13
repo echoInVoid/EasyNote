@@ -10,7 +10,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import myOperations as oper
 
-class Ui_EditWindow(object):
+class UiEditWindow(object):
     def setupUi(self, EditWindow: QtWidgets.QWidget):
         self.EditWindow = EditWindow
         self.EditWindow.setObjectName("EditWindow")
