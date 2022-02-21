@@ -85,8 +85,9 @@ class UIReviewWindow(object):
         self.checkBtn.setText(_translate("checkBtn" ,"检查"))
 
     def isValidWord(self, word):
-        if word in string.punctuation: return False # English puncs
-        if word in hanzi.punctuation: return False # Chinese puncs
+        if word in r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~""": return False # English puncs
+        chineseP = '＂＃＄％＆＇（）＊＋，－／：；＜＝＞＠［＼］＾＿｀｛｜｝～｟｠｢｣､　、〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟〰〾〿–—‘’‛“”„‟…‧﹏﹑﹔·！？｡。'
+        if word in chineseP: return False # Chinese puncs
         if ' ' in word: return False
         if word.strip() == '': return False
         return True
