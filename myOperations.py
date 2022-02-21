@@ -81,7 +81,7 @@ def reviewNote(file):
         return None
 
 
-def saveScore(title: str, score: int, ctime=time.localtime(time.time())):
+def saveScore(title: str, score: int, ctime):
     if not os.path.isfile(".\\score.json"):
         f = open(".\\score.json", "w")
         f.write(r"{}")
@@ -112,7 +112,8 @@ def showScore(title):
             log.info("Opened score record for '%s'."%title)
     except KeyError:
         log.error("No reviewing record for '%s'."%title)
-    
+        scores = []
+
     historyWid = myReviewHistory()
     historyWid.setupNote(scores)
     historyWid.show()
