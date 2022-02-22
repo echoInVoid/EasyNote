@@ -10,8 +10,13 @@
 
 import time
 from PyQt5 import QtCore, QtWidgets, QtGui
-from jieba import lcut
 from random import randint
+
+import jieba
+jieba.set_dictionary('.\\dict.txt')
+import jieba.analyse
+jieba.analyse.set_idf_path('.\\idf.txt')
+jieba.initialize()
 
 import myOperations as oper
 
@@ -93,7 +98,7 @@ class UIReviewWindow(object):
 
     def setupForm(self, file: dict):
         self.file = file
-        self.fileCut = lcut(file['text'])
+        self.fileCut = jieba.lcut(file['text'])
         self.spaces = []
         text = ''
         for word in self.fileCut:
