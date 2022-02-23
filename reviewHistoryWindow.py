@@ -18,6 +18,7 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PyQt5 import QtCore, QtWidgets, QtGui
 import matplotlib.pyplot as plt
 import logging as log
+import myOperations as oper
 
 
 class UIReviewHistoryWindow(object):
@@ -42,6 +43,12 @@ class UIReviewHistoryWindow(object):
         self.verticalLayout.setObjectName("verticalLayout")
         self.verticalLayout.addWidget(self.canvas)
 
+        self.clear = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.clear.setStyleSheet("font-family: 微软雅黑; font-size: x-large;")
+        self.clear.setText("清除历史")
+        self.clear.clicked.connect(self.clearHistory)
+        self.verticalLayout.addWidget(self.clear)
+
         self.retranslateUi(self.Dialog)
         QtCore.QMetaObject.connectSlotsByName(self.Dialog)
 
@@ -49,8 +56,16 @@ class UIReviewHistoryWindow(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "EasyNote - 复习历史"))
 
-    def setupNote(self, scores: dict):
+    def setupNote(self, scores: list, title):
+        # widgets for matplotlib
+        plt.clf()
+
+        self.title = title
         t = [time.strftime("%Y%m%d-%H:%M:%S", tuple(i[0])) for i in scores]
         scores = [i[1] for i in scores]
         plt.plot(t, scores, 'bo-')
         self.canvas.draw()
+
+    def clearHistory(self):
+        oper.delHistory(self.title)
+        self.setupNote([], self.title)

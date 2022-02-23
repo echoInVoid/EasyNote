@@ -1,3 +1,4 @@
+from fileinput import filename
 import json
 import logging as log
 import time
@@ -18,7 +19,7 @@ def readNotesList():
                 with open(file, 'r') as f:
                     note = json.load(f)
             except:
-                log.error("%s is not a readable json file.")
+                log.error("%s is not a readable json file."%file)
             else:
                 noteList.append(note)
     
@@ -115,6 +116,32 @@ def showScore(title):
         scores = []
 
     historyWid = myReviewHistory()
-    historyWid.setupNote(scores)
+    historyWid.setupNote(scores, title)
     historyWid.show()
     return historyWid
+
+def delHistory(title):
+    if not os.path.isfile(".\\score.json"):
+        log.error("File score.json doesn't exist!")
+        return None
+
+    with open(".\\score.json", "r") as f:
+        file = json.loads(f.read())
+    
+    if title in file.keys():
+        del file[title]
+    
+    with open(".\\score.json", 'w') as f:
+        j = json.dumps(file, sort_keys=True, indent=4, separators=(',', ':'))
+        f.write(j)
+
+def delNote(fileName):
+    if (os.path.isfile(".\\notes\\%s"%fileName)):
+        with open(".\\notes\\%s"%fileName, 'r') as f:
+            try:
+                name = json.loads(f.read())
+            except:
+                log.error("%s is not a readable json file."%fileName)
+            else:
+                delHistory(name['title'])
+        os.remove(".\\notes\\%s"%fileName)

@@ -83,6 +83,11 @@ class UIViewAllWindow(object):
         self.reviewH.setObjectName("review")
         self.reviewH.clicked.connect(self.reviewHistory)
         self.operations.addWidget(self.reviewH)
+        # delete button
+        self.delete = QtWidgets.QPushButton(self.centralWidget)
+        self.delete.setObjectName("delete")
+        self.delete.clicked.connect(self.delNote)
+        self.operations.addWidget(self.delete)
         # cancel button
         self.cancel = QtWidgets.QPushButton(self.centralWidget)
         self.cancel.setObjectName("cancel")
@@ -95,13 +100,14 @@ class UIViewAllWindow(object):
 
     def retranslateUi(self, Widget):
         _translate = QtCore.QCoreApplication.translate
-        Widget.setWindowTitle(_translate("Widget", "easyNote - 所有笔记"))
+        Widget.setWindowTitle(_translate("Widget", "EasyNote - 所有笔记"))
         self.title.setText(_translate("Widget", "所有笔记"))
         self.key.setPlaceholderText(_translate("Widget", "搜索"))
         self.searchButton.setText(_translate("Widget", "搜索"))
         self.open_.setText(_translate("Widget", "打开"))
         self.review.setText(_translate("Widget", "复习"))
         self.reviewH.setText(_translate("Widget", "复习历史"))
+        self.delete.setText(_translate("Widget", "删除"))
         self.cancel.setText(_translate("Widget", "取消"))
 
     def updateList(self):
@@ -129,6 +135,11 @@ class UIViewAllWindow(object):
     def reviewHistory(self):
         if len(self.listWidget.selectedItems()) == 1:
             oper.showScore(self.listWidget.selectedItems()[0].data(5))
+
+    def delNote(self):
+        if len(self.listWidget.selectedItems()) == 1:
+            oper.delNote(self.listWidget.selectedItems()[0].data(5))
+            self.updateList()
 
     def kill(self):
         self.Widget.destroy()

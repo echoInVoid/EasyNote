@@ -44,6 +44,18 @@ class UIReviewWindow(object):
         self.title.setObjectName("title")
         self.mainLayout.addWidget(self.title)
 
+        # HLine
+        self.line = QtWidgets.QFrame(self.verticalLayoutWidget)
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.mainLayout.addWidget(self.line)
+
+        self.score = QtWidgets.QLabel()
+        self.score.setStyleSheet("font-size: 30px; font-family: 微软雅黑;")
+        self.score.setText("分数：N/A")
+        self.mainLayout.addWidget(self.score)
+
         self.text = QtWidgets.QTextBrowser(self.verticalLayoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
@@ -94,6 +106,7 @@ class UIReviewWindow(object):
         if word in chineseP: return False # Chinese puncs
         if ' ' in word: return False
         if word.strip() == '': return False
+        if len(word) <= 1: return False
         return True
 
     def setupForm(self, file: dict):
@@ -102,7 +115,7 @@ class UIReviewWindow(object):
         self.spaces = []
         text = ''
         for word in self.fileCut:
-            if randint(0, 20) == 0 and self.isValidWord(word):
+            if randint(0, 5) == 0 and self.isValidWord(word):
                 self.spaces.append(word)
                 text += '___%d___' % len(self.spaces)
             else:
@@ -128,5 +141,6 @@ class UIReviewWindow(object):
                 textField.setStyleSheet("background-color: rgba(255,135,143,147);")
         
         score = score / self.form.rowCount() * 10
+        self.score.setText("分数：%d"%score)
         
         oper.saveScore(self.file['title'], score, time.localtime(time.time()))
