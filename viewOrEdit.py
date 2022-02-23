@@ -110,7 +110,7 @@ class UiEditWindow(object):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
-        self.EditWindow.setWindowTitle(_translate("EditWindow", "EasyLog - 查看&编辑"))
+        self.EditWindow.setWindowTitle(_translate("EditWindow", "EasyNote - 查看&编辑"))
         self.title.setText(_translate("EditWindow", "浏览&编辑笔记"))
         self.editState.setText(_translate("EditWindow", "编辑: 禁用"))
         self.switchEditButton.setText(_translate("EditWindow", "切换编辑"))

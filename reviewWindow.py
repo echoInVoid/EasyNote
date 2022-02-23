@@ -96,7 +96,7 @@ class UIReviewWindow(object):
 
     def retranslateUi(self, ReviewWindow):
         _translate = QtCore.QCoreApplication.translate
-        ReviewWindow.setWindowTitle(_translate("ReviewWindow", "EasyLog - 复习"))
+        ReviewWindow.setWindowTitle(_translate("ReviewWindow", "EasyNote - 复习"))
         self.title.setText(_translate("title", "复习"))
         self.checkBtn.setText(_translate("checkBtn" ,"检查"))
 
