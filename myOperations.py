@@ -13,7 +13,7 @@ def readNotesList():
         return []
     
     for file in os.listdir(".\\notes"):
-        file = ".\\notes\\%s"%file
+        file = ".\\notes\\%s\\note.json"%file
         if (os.path.isfile(file)):
             try:
                 with open(file, 'r') as f:
@@ -26,7 +26,7 @@ def readNotesList():
     return noteList
 
 def save(title, text, ctime=time.localtime(time.time())):
-    filename = "%s_%s"%(title, time.strftime(r"%Y%m%d_%H%M%S", ctime))
+    filename = "%s"%title
 
     if (not os.path.exists(".\\notes")):
         os.mkdir(".\\notes")
@@ -35,6 +35,7 @@ def save(title, text, ctime=time.localtime(time.time())):
     
     contain = {"title": title, "text": text, "time": tuple(ctime)}
     
+    if os.path.exists(".\\notes\\"+filename): rmtree(".\\notes\\"+filename)
     os.mkdir(".\\notes\\"+filename)
     with open(".\\notes\\%s\\note.json"%filename, 'w') as f:
         j = json.dumps(contain, sort_keys=True, indent=4, separators=(',', ':'))
@@ -59,11 +60,15 @@ def viewAll():
 
 def viewFile(file):
     filepath = ".\\notes\\%s"%file.data(5)
-    if os.path.exists(filepath) and os.path.isfile(filepath):
+    if os.path.exists(filepath):
+        clearCache()
+        os.rmdir(".\\cache")
+        copytree(filepath+"\\images", ".\\cache")
+
         viewWid = myEdit()
         viewWid.show()
 
-        with open(filepath, 'r') as f:
+        with open(filepath+"\\note.json", 'r') as f:
             viewWid.setFile(json.loads(f.read()))
 
         return viewWid
@@ -74,7 +79,7 @@ def viewFile(file):
 
 def reviewNote(file):
     filepath = ".\\notes\\%s"%file
-    if os.path.exists(filepath) and os.path.isfile(filepath):
+    if os.path.exists(filepath):
         viewWid = myReview()
         viewWid.show()
 
@@ -110,7 +115,7 @@ def showScore(title):
         log.error("File score.json doesn't exist!")
         return None
 
-    with open(".\\notes\\%s"%title, 'r') as f:
+    with open(".\\notes\\%s\\note.json"%title, 'r') as f:
         title = json.loads(f.read())["title"]
 
     try:
@@ -142,15 +147,15 @@ def delHistory(title):
         f.write(j)
 
 def delNote(fileName):
-    if (os.path.isfile(".\\notes\\%s"%fileName)):
-        with open(".\\notes\\%s"%fileName, 'r') as f:
+    if (os.path.isdir(".\\notes\\%s"%fileName)):
+        with open(".\\notes\\%s\\note.json"%fileName, 'r') as f:
             try:
                 name = json.loads(f.read())
             except:
                 log.error("%s is not a readable json file."%fileName)
             else:
                 delHistory(name['title'])
-        rmtree(".\\notes\\%s"%fileName[:-5])
+        rmtree(".\\notes\\%s"%fileName)
 
 def clearCache():
     if os.path.isdir(".\\cache"):

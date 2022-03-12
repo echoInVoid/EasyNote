@@ -118,10 +118,8 @@ class UIViewAllWindow(object):
         key = self.key.text()
         for note in notes:
             if key in note['title']:
-                item = QtWidgets.QListWidgetItem(
-                    note['title'], self.listWidget)
-                filename = "%s_%s.json" % (note['title'], time.strftime(
-                    r"%Y%m%d_%H%M%S", tuple(note['time'])))
+                item = QtWidgets.QListWidgetItem(note['title'], self.listWidget)
+                filename = note['title']
                 item.setData(5, filename)
 
     def openNote(self):

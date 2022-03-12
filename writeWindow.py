@@ -146,7 +146,7 @@ class UIWriteWindow(object):
         self.create.setText(_translate("WriteWindow", "创建笔记"))
         self.label_2.setText(_translate("WriteWindow", "标题"))
         self.getTitle.setPlaceholderText(_translate("WriteWindow", "输入标题"))
-        self.label_3.setText(_translate("WriteWindow", "内容"))
+        self.label_3.setText(_translate("WriteWindow", "正文"))
         self.inImage.setText(_translate("WriteWindow", "插入图片"))
         self.inCode.setText(_translate("WriteWindow", "插入代码"))
         self.inLink.setText(_translate("WriteWindow", "插入链接"))
@@ -160,7 +160,6 @@ class UIWriteWindow(object):
     def accept(self):
         title = self.getTitle.text()
         text = self.getText.toPlainText()
-        text = str(md.markdown(text))
         if len(title) + len(text) != 0:
             oper.save(title, text)
             self.kill()
