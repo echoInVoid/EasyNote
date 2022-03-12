@@ -1,6 +1,6 @@
-from fileinput import filename
 import json
 import logging as log
+from shutil import copytree, rmtree
 import time
 import os
 from myWindows import *
@@ -26,7 +26,7 @@ def readNotesList():
     return noteList
 
 def save(title, text, ctime=time.localtime(time.time())):
-    filename = "%s_%s.json"%(title, time.strftime(r"%Y%m%d_%H%M%S", ctime))
+    filename = "%s_%s"%(title, time.strftime(r"%Y%m%d_%H%M%S", ctime))
 
     if (not os.path.exists(".\\notes")):
         os.mkdir(".\\notes")
@@ -35,10 +35,16 @@ def save(title, text, ctime=time.localtime(time.time())):
     
     contain = {"title": title, "text": text, "time": tuple(ctime)}
     
-    with open(".\\notes\\"+filename, 'w') as f:
+    os.mkdir(".\\notes\\"+filename)
+    with open(".\\notes\\%s\\note.json"%filename, 'w') as f:
         j = json.dumps(contain, sort_keys=True, indent=4, separators=(',', ':'))
         f.write(j)
-        log.info("Saved '%s' ."%filename)
+
+    if os.path.isdir(".\\cache"): copytree('.\\cache', '.\\notes\\%s\\images'%filename)
+    else: os.mkdir(".\\%s\\images"%filename)
+
+    clearCache()
+    log.info("Saved '%s' ."%filename)
     return 0
 
 def write():
@@ -144,4 +150,10 @@ def delNote(fileName):
                 log.error("%s is not a readable json file."%fileName)
             else:
                 delHistory(name['title'])
-        os.remove(".\\notes\\%s"%fileName)
+        rmtree(".\\notes\\%s"%fileName[:-5])
+
+def clearCache():
+    if os.path.isdir(".\\cache"):
+        rmtree(".\\cache")
+        os.mkdir(".\\cache")
+        log.info("Cleared cache.")

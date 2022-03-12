@@ -6,7 +6,10 @@
 
 
 import logging
+import os
+import shutil
 from PyQt5 import QtCore, QtGui, QtWidgets
+from requests import get
 import myOperations as oper
 import markdown as md
 
@@ -90,6 +93,7 @@ class UIWriteWindow(object):
         self.buttons.setObjectName("buttons")
         self.inImage = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.inImage.setObjectName("inImage")
+        self.inImage.clicked.connect(self.addImage)
         self.buttons.addWidget(self.inImage)
         self.inCode = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.inCode.setObjectName("inCode")
@@ -112,6 +116,7 @@ class UIWriteWindow(object):
         self.getText.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.getText.setAutoFillBackground(False)
         self.getText.setObjectName("getText")
+        self.getText.setAcceptRichText(False)
         self.getText.textChanged.connect(self.updatePreview)
         self.edit.addWidget(self.getText)
         # markdown preview
@@ -164,7 +169,7 @@ class UIWriteWindow(object):
     def updatePreview(self):
         richText = str(md.markdown(
             self.getText.toPlainText(),
-            extensions=['markdown.extensions.fenced_code']
+            extensions=['markdown.extensions.fenced_code', 'markdown.extensions.codehilite', 'markdown.extensions.extra', ]
         ))
         self.preview.setHtml(richText)
 
@@ -206,6 +211,7 @@ class UIWriteWindow(object):
         verticalLayout.addWidget(label_2)
         textEdit = QtWidgets.QTextEdit(verticalLayoutWidget)
         textEdit.setObjectName("textEdit")
+        textEdit.setAcceptRichText(False)
         verticalLayout.addWidget(textEdit)
 
         self.inputDialog.setWindowTitle("插入代码")
@@ -213,10 +219,79 @@ class UIWriteWindow(object):
         label_2.setText("代码")
 
         def insertCode():
-            code = "```%s\n%s\n```"%(lineEdit.text(), textEdit.toPlainText())
-            self.getText.textCursor().insertText(code)
-            self.inputDialog.destroy()
+            if textEdit.toPlainText():
+                code = "```%s\n%s\n```"%(lineEdit.text(), textEdit.toPlainText())
+                self.getText.textCursor().insertText(code)
+                self.inputDialog.destroy()
         buttonBox.accepted.connect(insertCode)
+        buttonBox.rejected.connect(self.inputDialog.destroy)
+
+        self.inputDialog.show()
+
+
+    def addImage(self):
+        self.inputDialog = QtWidgets.QDialog()
+        self.inputDialog.setObjectName("Dialog")
+        self.inputDialog.resize(400, 300)
+        buttonBox = QtWidgets.QDialogButtonBox(self.inputDialog)
+        buttonBox.setGeometry(QtCore.QRect(30, 260, 341, 32))
+        buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        buttonBox.setObjectName("buttonBox")
+
+        verticalLayoutWidget = QtWidgets.QWidget(self.inputDialog)
+        verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 361, 241))
+        verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        verticalLayout = QtWidgets.QVBoxLayout(verticalLayoutWidget)
+        verticalLayout.setContentsMargins(0, 0, 0, 0)
+        verticalLayout.setObjectName("verticalLayout")
+
+        label = QtWidgets.QLabel(verticalLayoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("Microsoft YaHei UI")
+        font.setPointSize(11)
+        label.setFont(font)
+        label.setObjectName("label")
+        verticalLayout.addWidget(label)
+        getImageURL = QtWidgets.QLineEdit(verticalLayoutWidget)
+        getImageURL.setObjectName("getImageURL")
+        getImageURL.setClearButtonEnabled(True)
+        verticalLayout.addWidget(getImageURL)
+        line = QtWidgets.QFrame(verticalLayoutWidget)
+        line.setFrameShape(QtWidgets.QFrame.HLine)
+        line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        line.setObjectName("line")
+        verticalLayout.addWidget(line)
+        label_2 = QtWidgets.QLabel(verticalLayoutWidget)
+        label_2.setFont(font)
+        label_2.setObjectName("label_2")
+        verticalLayout.addWidget(label_2)
+        getImageText = QtWidgets.QLineEdit(verticalLayoutWidget)
+        getImageText.setObjectName("getImageText")
+        getImageText.setClearButtonEnabled(True)
+        verticalLayout.addWidget(getImageText)
+
+        self.inputDialog.setWindowTitle("插入图片")
+        label.setText("图片路径")
+        label_2.setText("图片描述（可选的）")
+
+        def insertImage():
+            path = getImageURL.text()
+            if os.path.isfile(path):
+                fType = os.path.splitext(path)[-1]
+                cPath = ".\\\\cache\\\\%d%s"%(hash(path), fType)
+                shutil.copyfile(path, cPath)
+                
+                text = '![%s](%s "%s")'%(getImageText.text().replace(' ', '-'), cPath, getImageText.text())
+                self.getText.textCursor().insertText(text)
+                return
+            else:
+                box = QtWidgets.QMessageBox()
+                box.setWindowTitle("警告")
+                box.setText("%s不可写入"%path)
+                box.exec()
+                logging.warning('"%s" cannot be copied!'%path)
+        buttonBox.accepted.connect(insertImage)
         buttonBox.rejected.connect(self.inputDialog.destroy)
 
         self.inputDialog.show()
