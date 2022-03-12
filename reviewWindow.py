@@ -11,6 +11,7 @@
 import logging
 import time
 from PyQt5 import QtCore, QtWidgets, QtGui
+import markdown as md
 from random import randint
 
 import jieba
@@ -21,6 +22,7 @@ jieba.analyse.set_idf_path('.\\idf.txt')
 jieba.initialize()
 
 import myOperations as oper
+from cleanHTML import clean_html
 
 
 class UIReviewWindow(object):
@@ -102,10 +104,10 @@ class UIReviewWindow(object):
         self.title.setText(_translate("title", "复习"))
         self.checkBtn.setText(_translate("checkBtn" ,"检查"))
 
-    def isValidWord(self, word):
-        if word in r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~""": return False # English puncs
+    def isValidWord(self, word: str):
+        if set(word) & set(r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""): return False # English puncs
         chineseP = '＂＃＄％＆＇（）＊＋，－／：；＜＝＞＠［＼］＾＿｀｛｜｝～｟｠｢｣､　、〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟〰〾〿–—‘’‛“”„‟…‧﹏﹑﹔·！？｡。'
-        if word in chineseP: return False # Chinese puncs
+        if set(word) & set(chineseP): return False # Chinese puncs
         if ' ' in word: return False
         if word.strip() == '': return False
         if len(word) <= 1: return False
@@ -113,16 +115,28 @@ class UIReviewWindow(object):
 
     def setupForm(self, file: dict):
         self.file = file
-        self.fileCut = jieba.lcut(file['text'])
+        self.file['text'] = md.markdown(
+            self.file['text'],
+            extensions=['markdown.extensions.fenced_code', 'markdown.extensions.codehilite', 'markdown.extensions.extra', ]
+        )
+        
+        pureText = clean_html(self.file['text'])
+
+        filecut = jieba.lcut(pureText)
+        print(filecut)
         self.spaces = []
-        text = ''
-        for word in self.fileCut:
-            if randint(0, 5) == 0 and self.isValidWord(word):
+        for word in filecut:
+            if randint(0,5)==0 and self.isValidWord(word):
                 self.spaces.append(word)
-                text += '___%d___' % len(self.spaces)
-            else:
-                text += word
-        self.text.setText(text)
+
+        for i in range(len(self.spaces)):
+            self.file['text'] = self.file['text'].replace(self.spaces[i], "___%d___"%(i+1), 1)
+
+        richText = str(md.markdown(
+            self.file['text'],
+            extensions=['markdown.extensions.fenced_code', 'markdown.extensions.codehilite', 'markdown.extensions.extra', ]
+        ))
+        self.text.setHtml(richText)
 
         self.inputs = []
         for i in range(len(self.spaces)):

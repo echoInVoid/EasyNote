@@ -80,10 +80,13 @@ def viewFile(file):
 def reviewNote(file):
     filepath = ".\\notes\\%s"%file
     if os.path.exists(filepath):
+        clearCache()
+        os.rmdir(".\\cache")
+        copytree(filepath+"\\images", ".\\cache")
         viewWid = myReview()
         viewWid.show()
 
-        with open(filepath, 'r') as f:
+        with open(filepath+"\\note.json", 'r') as f:
             viewWid.setupForm(json.loads(f.read()))
 
         return viewWid

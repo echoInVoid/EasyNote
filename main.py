@@ -20,6 +20,7 @@ def setUp():
     log.basicConfig(filename='logs\\%s.log'%time.strftime(r"%Y%m%d-%Hh-%Mm"), level=log.INFO, format=LOG_FORMAT)
 
     log.info("Set-Up completed.")
+    clearCache()
 
 def main():
     setUp()
