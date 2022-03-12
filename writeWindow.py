@@ -101,6 +101,7 @@ class UIWriteWindow(object):
         self.buttons.addWidget(self.inCode)
         self.inLink = QtWidgets.QPushButton(self.verticalLayoutWidget)
         self.inLink.setObjectName("inLink")
+        self.inLink.clicked.connect(self.addLink)
         self.buttons.addWidget(self.inLink)
         self.texts.addLayout(self.buttons)
 
@@ -126,6 +127,8 @@ class UIWriteWindow(object):
         font.setPointSize(11)
         self.preview.setFont(font)
         self.preview.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ArrowCursor))
+        self.preview.setOpenLinks(False)
+        self.preview.anchorClicked.connect(self.openLink)
         self.preview.setObjectName("preview")
         self.edit.addWidget(self.preview)
 
@@ -172,6 +175,9 @@ class UIWriteWindow(object):
             extensions=['markdown.extensions.fenced_code', 'markdown.extensions.codehilite', 'markdown.extensions.extra', ]
         ))
         self.preview.setHtml(richText)
+
+    def openLink(self, link: QtCore.QUrl):
+        os.system('start "" "%s"'%link.url())
 
     def addCode(self):
         self.inputDialog = QtWidgets.QDialog()
@@ -284,6 +290,7 @@ class UIWriteWindow(object):
                 
                 text = '![%s](%s "%s")'%(getImageText.text().replace(' ', '-'), cPath, getImageText.text())
                 self.getText.textCursor().insertText(text)
+                self.inputDialog.destroy()
                 return
             else:
                 box = QtWidgets.QMessageBox()
@@ -295,3 +302,57 @@ class UIWriteWindow(object):
         buttonBox.rejected.connect(self.inputDialog.destroy)
 
         self.inputDialog.show()
+
+    def addLink(self):
+            self.inputDialog = QtWidgets.QDialog()
+            self.inputDialog.setObjectName("Dialog")
+            self.inputDialog.resize(400, 300)
+            buttonBox = QtWidgets.QDialogButtonBox(self.inputDialog)
+            buttonBox.setGeometry(QtCore.QRect(30, 260, 341, 32))
+            buttonBox.setOrientation(QtCore.Qt.Horizontal)
+            buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+            buttonBox.setObjectName("buttonBox")
+
+            verticalLayoutWidget = QtWidgets.QWidget(self.inputDialog)
+            verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 361, 241))
+            verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+            verticalLayout = QtWidgets.QVBoxLayout(verticalLayoutWidget)
+            verticalLayout.setContentsMargins(0, 0, 0, 0)
+            verticalLayout.setObjectName("verticalLayout")
+
+            label = QtWidgets.QLabel(verticalLayoutWidget)
+            font = QtGui.QFont()
+            font.setFamily("Microsoft YaHei UI")
+            font.setPointSize(11)
+            label.setFont(font)
+            label.setObjectName("label")
+            verticalLayout.addWidget(label)
+            getLinkName = QtWidgets.QLineEdit(verticalLayoutWidget)
+            getLinkName.setObjectName("getLinkName")
+            getLinkName.setClearButtonEnabled(True)
+            verticalLayout.addWidget(getLinkName)
+            line = QtWidgets.QFrame(verticalLayoutWidget)
+            line.setFrameShape(QtWidgets.QFrame.HLine)
+            line.setFrameShadow(QtWidgets.QFrame.Sunken)
+            line.setObjectName("line")
+            verticalLayout.addWidget(line)
+            label_2 = QtWidgets.QLabel(verticalLayoutWidget)
+            label_2.setFont(font)
+            label_2.setObjectName("label_2")
+            verticalLayout.addWidget(label_2)
+            getLinkURL = QtWidgets.QLineEdit(verticalLayoutWidget)
+            getLinkURL.setObjectName("getLinkURL")
+            getLinkURL.setClearButtonEnabled(True)
+            verticalLayout.addWidget(getLinkURL)
+
+            self.inputDialog.setWindowTitle("插入链接")
+            label.setText("链接名称（可选的）")
+            label_2.setText("链接地址")
+
+            def insertLink():
+                if getLinkURL.text():
+                    self.getText.textCursor().insertText("[%s](%s)"%(getLinkName.text(), getLinkURL.text()))
+            buttonBox.accepted.connect(insertLink)
+            buttonBox.rejected.connect(self.inputDialog.destroy)
+            
+            self.inputDialog.show()
