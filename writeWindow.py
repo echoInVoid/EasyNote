@@ -9,7 +9,6 @@ import logging
 import os
 import shutil
 from PyQt5 import QtCore, QtGui, QtWidgets
-from requests import get
 import myOperations as oper
 import markdown as md
 
@@ -18,22 +17,13 @@ class UIWriteWindow(object):
     def setupUi(self, WriteWindow: QtWidgets.QWidget):
         self.WriteWindow = WriteWindow
         self.WriteWindow.setObjectName("WriteWindow")
-        self.WriteWindow.resize(760, 606)
-        
-        self.buttonBox = QtWidgets.QDialogButtonBox(self.WriteWindow)
-        self.buttonBox.setGeometry(QtCore.QRect(370, 540, 341, 61))
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
+        self.WriteWindow.resize(760, 600)
 
-        self.verticalLayoutWidget = QtWidgets.QWidget(self.WriteWindow)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(30, 20, 691, 521))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.WriteWindow)
+        self.verticalLayout.setContentsMargins(20, 20, 20, 20)
         self.verticalLayout.setObjectName("verticalLayout")
 
-        self.create = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.create = QtWidgets.QLabel(self.WriteWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(26)
@@ -42,13 +32,13 @@ class UIWriteWindow(object):
         self.create.setObjectName("create")
         self.verticalLayout.addWidget(self.create)
 
-        self.line = QtWidgets.QFrame(self.verticalLayoutWidget)
+        self.line = QtWidgets.QFrame(self.WriteWindow)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.verticalLayout.addWidget(self.line)
 
-        self.label_2 = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.label_2 = QtWidgets.QLabel(self.WriteWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(18)
@@ -57,7 +47,7 @@ class UIWriteWindow(object):
         self.label_2.setObjectName("label_2")
         self.verticalLayout.addWidget(self.label_2)
 
-        self.getTitle = QtWidgets.QLineEdit(self.verticalLayoutWidget)
+        self.getTitle = QtWidgets.QLineEdit(self.WriteWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(14)
@@ -69,13 +59,13 @@ class UIWriteWindow(object):
         self.getTitle.setObjectName("getTitle")
         self.verticalLayout.addWidget(self.getTitle)
 
-        self.line_2 = QtWidgets.QFrame(self.verticalLayoutWidget)
+        self.line_2 = QtWidgets.QFrame(self.WriteWindow)
         self.line_2.setFrameShape(QtWidgets.QFrame.HLine)
         self.line_2.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_2.setObjectName("line_2")
         self.verticalLayout.addWidget(self.line_2)
 
-        self.label_3 = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.label_3 = QtWidgets.QLabel(self.WriteWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(18)
@@ -91,15 +81,15 @@ class UIWriteWindow(object):
         # contain control buttons
         self.buttons = QtWidgets.QHBoxLayout()
         self.buttons.setObjectName("buttons")
-        self.inImage = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.inImage = QtWidgets.QPushButton(self.WriteWindow)
         self.inImage.setObjectName("inImage")
         self.inImage.clicked.connect(self.addImage)
         self.buttons.addWidget(self.inImage)
-        self.inCode = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.inCode = QtWidgets.QPushButton(self.WriteWindow)
         self.inCode.setObjectName("inCode")
         self.inCode.clicked.connect(self.addCode)
         self.buttons.addWidget(self.inCode)
-        self.inLink = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.inLink = QtWidgets.QPushButton(self.WriteWindow)
         self.inLink.setObjectName("inLink")
         self.inLink.clicked.connect(self.addLink)
         self.buttons.addWidget(self.inLink)
@@ -109,7 +99,7 @@ class UIWriteWindow(object):
         self.edit = QtWidgets.QHBoxLayout()
         self.edit.setObjectName("edit")
         # input area
-        self.getText = QtWidgets.QTextEdit(self.verticalLayoutWidget)
+        self.getText = QtWidgets.QTextEdit(self.WriteWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(11)
@@ -121,7 +111,7 @@ class UIWriteWindow(object):
         self.getText.textChanged.connect(self.updatePreview)
         self.edit.addWidget(self.getText)
         # markdown preview
-        self.preview = QtWidgets.QTextBrowser(self.verticalLayoutWidget)
+        self.preview = QtWidgets.QTextBrowser(self.WriteWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(11)
@@ -134,6 +124,13 @@ class UIWriteWindow(object):
 
         self.texts.addLayout(self.edit)
         self.verticalLayout.addLayout(self.texts)
+        
+        self.buttonBox = QtWidgets.QDialogButtonBox(self.WriteWindow)
+        self.buttonBox.setGeometry(QtCore.QRect(370, 540, 341, 61))
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.verticalLayout.addWidget(self.buttonBox)
 
         self.retranslateUi()
         self.buttonBox.accepted.connect(self.accept)

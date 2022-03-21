@@ -17,30 +17,17 @@ class UIEditWindow(object):
     def setupUi(self, EditWindow: QtWidgets.QWidget):
         self.EditWindow = EditWindow
         self.EditWindow.setObjectName("EditWindow")
-        self.EditWindow.resize(760, 606)
+        self.EditWindow.resize(760, 600)
 
         self.canEdit = False
-
-        self.buttonBox = QtWidgets.QDialogButtonBox(self.EditWindow)
-        self.buttonBox.setGeometry(QtCore.QRect(350, 540, 341, 32))
-        font = QtGui.QFont()
-        font.setFamily("微软雅黑")
-        font.setPointSize(12)
-        self.buttonBox.setFont(font)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName("buttonBox")
         
         #main layout
-        self.verticalLayoutWidget = QtWidgets.QWidget(self.EditWindow)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(30, 20, 691, 511))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.EditWindow)
+        self.verticalLayout.setContentsMargins(20, 20, 20, 20)
         self.verticalLayout.setObjectName("verticalLayout")
 
         #title
-        self.title = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.title = QtWidgets.QLabel(self.EditWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(26)
@@ -53,7 +40,7 @@ class UIEditWindow(object):
         self.head = QtWidgets.QHBoxLayout()
         self.head.setObjectName("head")
         #show edit state
-        self.editState = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.editState = QtWidgets.QLabel(self.EditWindow)
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(12)
@@ -62,7 +49,7 @@ class UIEditWindow(object):
         self.editState.setObjectName("editState")
         self.head.addWidget(self.editState)
         #button to switch edit state
-        self.switchEditButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.switchEditButton = QtWidgets.QPushButton(self.EditWindow)
         font = QtGui.QFont()
         font.setFamily("微软雅黑")
         font.setPointSize(12)
@@ -73,14 +60,14 @@ class UIEditWindow(object):
         self.verticalLayout.addLayout(self.head)
 
         #a simple line between INFO area and EDIT area
-        self.line = QtWidgets.QFrame(self.verticalLayoutWidget)
+        self.line = QtWidgets.QFrame(self.EditWindow)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.verticalLayout.addWidget(self.line)
 
         #get title
-        self.getTitle = QtWidgets.QLineEdit(self.verticalLayoutWidget)
+        self.getTitle = QtWidgets.QLineEdit(self.EditWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -102,15 +89,15 @@ class UIEditWindow(object):
         # contain control buttons
         self.buttons = QtWidgets.QHBoxLayout()
         self.buttons.setObjectName("buttons")
-        self.inImage = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.inImage = QtWidgets.QPushButton(self.EditWindow)
         self.inImage.setObjectName("inImage")
         self.inImage.clicked.connect(self.addImage)
         self.buttons.addWidget(self.inImage)
-        self.inCode = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.inCode = QtWidgets.QPushButton(self.EditWindow)
         self.inCode.setObjectName("inCode")
         self.inCode.clicked.connect(self.addCode)
         self.buttons.addWidget(self.inCode)
-        self.inLink = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.inLink = QtWidgets.QPushButton(self.EditWindow)
         self.inLink.setObjectName("inLink")
         self.inLink.clicked.connect(self.addLink)
         self.buttons.addWidget(self.inLink)
@@ -120,7 +107,7 @@ class UIEditWindow(object):
         self.edit = QtWidgets.QHBoxLayout()
         self.edit.setObjectName("edit")
         # input area
-        self.getText = QtWidgets.QTextEdit(self.verticalLayoutWidget)
+        self.getText = QtWidgets.QTextEdit(self.EditWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(11)
@@ -133,7 +120,7 @@ class UIEditWindow(object):
         self.getText.textChanged.connect(self.updatePreview)
         self.edit.addWidget(self.getText)
         # markdown preview
-        self.preview = QtWidgets.QTextBrowser(self.verticalLayoutWidget)
+        self.preview = QtWidgets.QTextBrowser(self.EditWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(11)
@@ -146,6 +133,18 @@ class UIEditWindow(object):
 
         self.texts.addLayout(self.edit)
         self.verticalLayout.addLayout(self.texts)
+
+        # dialog buttonbox
+        self.buttonBox = QtWidgets.QDialogButtonBox(self.EditWindow)
+        self.buttonBox.setGeometry(QtCore.QRect(350, 540, 341, 32))
+        font = QtGui.QFont()
+        font.setFamily("微软雅黑")
+        font.setPointSize(12)
+        self.buttonBox.setFont(font)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.verticalLayout.addWidget(self.buttonBox)
 
         self.EditWindow.show()
 

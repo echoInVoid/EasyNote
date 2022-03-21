@@ -12,15 +12,15 @@ import myOperations as oper
 
 
 class UIMainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow: QtWidgets.QMainWindow):
         self.MainWindow = MainWindow
         self.MainWindow.setObjectName("MainWindow")
         self.MainWindow.resize(800, 600)
 
         self.centralwidget = QtWidgets.QWidget(self.MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName("gridLayout")
+        self.layout = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.layout.setObjectName("layout")
         self.MainWindow.setCentralWidget(self.centralwidget)
 
         #timer
@@ -29,12 +29,10 @@ class UIMainWindow(object):
         self.timer.timeout.connect(self.updateClock)
         self.timer.start()
         
-        #clock
-        self.time = QtWidgets.QLCDNumber(self.centralwidget)
-        self.time.setObjectName("time")
-        self.time.setDigitCount(8)
-        self.updateClock()
-        self.gridLayout.addWidget(self.time, 0, 1, 1, 1)
+        # layout of welcome
+        self.welcome = QtWidgets.QHBoxLayout(self.MainWindow)
+        self.welcome.setObjectName("welcome")
+        self.layout.addLayout(self.welcome)
 
         #welcome text
         self.welcomeText = QtWidgets.QLabel(self.centralwidget)
@@ -49,15 +47,26 @@ class UIMainWindow(object):
         self.welcomeText.setScaledContents(False)
         self.welcomeText.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.welcomeText.setIndent(4)
+        self.welcomeText.setMaximumHeight(70)
         self.welcomeText.setObjectName("welcomeText")
-        self.gridLayout.addWidget(self.welcomeText, 0, 0, 1, 1)
+        self.welcome.addWidget(self.welcomeText)
+
+        #clock
+        self.time = QtWidgets.QLCDNumber(self.centralwidget)
+        self.time.setObjectName("time")
+        self.time.setDigitCount(8)
+        self.time.setMaximumHeight(70)
+        self.updateClock()
+        self.welcome.addWidget(self.time)
 
         #welcome picture
         self.welcomePic = QtWidgets.QLabel(self.centralwidget)
         self.welcomePic.setText("")
-        self.welcomePic.setPixmap(QtGui.QPixmap("ui\\../resource/welcome.gif"))
+        self.welcomePic.setPixmap(QtGui.QPixmap(".\\resource\\welcome.gif"))
+        self.welcomePic.setScaledContents(True)
         self.welcomePic.setObjectName("welcomePic")
-        self.gridLayout.addWidget(self.welcomePic, 1, 0, 1, 2)
+        self.welcomePic.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        self.layout.addWidget(self.welcomePic)
 
         #menubar
         self.menubar = QtWidgets.QMenuBar(self.MainWindow)
@@ -95,16 +104,21 @@ class UIMainWindow(object):
         self.statusbar.setObjectName("statusbar")
         self.MainWindow.setStatusBar(self.statusbar)
 
+        # control layout
+        self.buttons = QtWidgets.QHBoxLayout()
+        self.buttons.setObjectName("buttons")
+        self.layout.addLayout(self.buttons)
+
         #help button
         self.helpButton = QtWidgets.QPushButton(self.centralwidget)
         self.helpButton.setObjectName("helpButton")
-        self.gridLayout.addWidget(self.helpButton, 2, 0, 1, 1)
+        self.buttons.addWidget(self.helpButton)
         self.helpButton.clicked.connect(self.openHelp)
 
         #exit button
         self.exitButton = QtWidgets.QPushButton(self.centralwidget)
         self.exitButton.setObjectName("exitButton")
-        self.gridLayout.addWidget(self.exitButton, 2, 1, 1, 1)
+        self.buttons.addWidget(self.exitButton)
         self.exitButton.clicked.connect(QtWidgets.QApplication.instance().quit)
 
         self.retranslateUi()

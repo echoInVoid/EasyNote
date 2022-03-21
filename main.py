@@ -16,7 +16,7 @@ bar.update(15)
 
 
 def setUp():
-    LOG_FORMAT = "[%(asctime)s][%(levelname)s] %(message)s"
+    LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s"
     log.basicConfig(filename='logs\\%s.log'%time.strftime(r"%Y%m%d-%Hh-%Mm"), level=log.INFO, format=LOG_FORMAT)
 
     log.info("Set-Up completed.")

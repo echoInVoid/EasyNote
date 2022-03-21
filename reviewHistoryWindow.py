@@ -35,15 +35,12 @@ class UIReviewHistoryWindow(object):
         plt.ylabel("分数")
         plt.xlabel("时间")
 
-        self.verticalLayoutWidget = QtWidgets.QWidget(self.Dialog)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(30, 20, 701, 581))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        self.verticalLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.Dialog)
+        self.verticalLayout.setContentsMargins(20, 20, 20, 20)
         self.verticalLayout.setObjectName("verticalLayout")
         self.verticalLayout.addWidget(self.canvas)
 
-        self.clear = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        self.clear = QtWidgets.QPushButton(self.Dialog)
         self.clear.setStyleSheet("font-family: 微软雅黑; font-size: x-large;")
         self.clear.setText("清除历史")
         self.clear.clicked.connect(self.clearHistory)

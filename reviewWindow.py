@@ -30,26 +30,23 @@ class UIReviewWindow(object):
         ReviewWindow.setObjectName("ReviewWindow")
         ReviewWindow.resize(760, 606)
 
-        self.verticalLayoutWidget = QtWidgets.QWidget(ReviewWindow)
-        self.verticalLayoutWidget.setGeometry(QtCore.QRect(20, 20, 711, 561))
-        self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-
-        self.mainLayout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
-        self.mainLayout.setContentsMargins(0, 0, 0, 0)
+        self.mainLayout = QtWidgets.QVBoxLayout(ReviewWindow)
+        self.mainLayout.setContentsMargins(10, 10, 10, 10)
         self.mainLayout.setObjectName("mainLayout")
 
         #title
-        self.title = QtWidgets.QLabel(self.verticalLayoutWidget)
+        self.title = QtWidgets.QLabel(ReviewWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(26)
         self.title.setFont(font)
         self.title.setIndent(7)
+        self.title.setMaximumHeight(40)
         self.title.setObjectName("title")
         self.mainLayout.addWidget(self.title)
 
         # HLine
-        self.line = QtWidgets.QFrame(self.verticalLayoutWidget)
+        self.line = QtWidgets.QFrame(ReviewWindow)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
@@ -58,9 +55,10 @@ class UIReviewWindow(object):
         self.score = QtWidgets.QLabel()
         self.score.setStyleSheet("font-size: 30px; font-family: 微软雅黑;")
         self.score.setText("分数：N/A")
+        self.score.setMaximumHeight(40)
         self.mainLayout.addWidget(self.score)
 
-        self.text = QtWidgets.QTextBrowser(self.verticalLayoutWidget)
+        self.text = QtWidgets.QTextBrowser(ReviewWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -75,9 +73,11 @@ class UIReviewWindow(object):
         self.mainLayout.addWidget(self.text)
 
         # a ScrollArea for form
-        self.formArea = QtWidgets.QScrollArea(self.verticalLayoutWidget)
+        self.formArea = QtWidgets.QScrollArea(ReviewWindow)
         self.formArea.setWidgetResizable(True)
         self.formArea.setObjectName("formArea")
+        self.formArea.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
+        self.formArea.setMaximumHeight(250)
         # child widget for form
         self.formWid = QtWidgets.QWidget()
         self.formWid.setGeometry(QtCore.QRect(0, 0, 707, 172))
@@ -123,11 +123,11 @@ class UIReviewWindow(object):
         pureText = clean_html(self.file['text'])
 
         filecut = jieba.lcut(pureText)
-        print(filecut)
         self.spaces = []
         for word in filecut:
             if randint(0,5)==0 and self.isValidWord(word):
                 self.spaces.append(word)
+        logging.debug(self.spaces)
 
         for i in range(len(self.spaces)):
             self.file['text'] = self.file['text'].replace(self.spaces[i], "___%d___"%(i+1), 1)
@@ -147,6 +147,7 @@ class UIReviewWindow(object):
             self.form.addRow('%d: '%(i+1), line)
     
     def check(self):
+        if self.form.rowCount() < 1: return
         score = 0
         for i in range(self.form.rowCount()):
             textField = self.inputs[i]
