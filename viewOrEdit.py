@@ -336,10 +336,7 @@ class UIEditWindow(object):
                 self.inputDialog.destroy()
                 return
             else:
-                box = QtWidgets.QMessageBox()
-                box.setWindowTitle("警告")
-                box.setText("%s不可写入"%path)
-                box.exec()
+                QtWidgets.QMessageBox().warning(None, "警告", "%s不是支持的文件"%path)
                 logging.warning('"%s" cannot be copied!'%path)
         buttonBox.accepted.connect(insertImage)
         buttonBox.rejected.connect(self.inputDialog.destroy)

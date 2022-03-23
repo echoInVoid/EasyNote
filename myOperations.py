@@ -97,33 +97,29 @@ def reviewNote(file):
 
 
 def saveScore(title: str, score: int, ctime):
-    if not os.path.isfile(".\\score.json"):
-        f = open(".\\score.json", "w")
-        f.write(r"{}")
-        f.close()
-    
-    with open(".\\score.json", 'r') as f:
+    path = ".\\notes\\%s\\note.json"%title
+    with open(path, 'r') as f:
         a = json.loads(f.read())
 
-    with open('.\\score.json', 'w') as f:
-        if title not in a.keys():
-            a[title] = []
-        a[title].append([tuple(ctime), score])
+    with open(path, 'w') as f:
+        if 'score' not in a.keys(): a['score'] = []
+        a['score'].append([tuple(ctime), score])
 
         j = json.dumps(a, sort_keys=True, indent=4, separators=(',', ':'))
         f.write(j)
 
 def showScore(title):
-    if not os.path.isfile(".\\score.json"):
-        log.error("File score.json doesn't exist!")
+    path = ".\\notes\\%s\\note.json"%title
+    if not os.path.isfile(path):
+        log.error("File %s doesn't exist!"%path)
         return None
 
     with open(".\\notes\\%s\\note.json"%title, 'r') as f:
         title = json.loads(f.read())["title"]
 
     try:
-        with open(".\\score.json") as f:
-            scores = json.loads(f.read())[title]
+        with open(path) as f:
+            scores = json.loads(f.read())['score']
             log.info("Opened score record for '%s'."%title)
     except KeyError:
         log.error("No reviewing record for '%s'."%title)
@@ -135,17 +131,18 @@ def showScore(title):
     return historyWid
 
 def delHistory(title):
-    if not os.path.isfile(".\\score.json"):
-        log.error("File score.json doesn't exist!")
+    path = ".\\notes\\%s\\note.json"%title
+    if not os.path.isfile(path):
+        log.error("File %s doesn't exist!"%path)
         return None
 
-    with open(".\\score.json", "r") as f:
+    with open(path, "r") as f:
         file = json.loads(f.read())
     
-    if title in file.keys():
-        del file[title]
+    if 'score' in file.keys():
+        del file['score']
     
-    with open(".\\score.json", 'w') as f:
+    with open(path, 'w') as f:
         j = json.dumps(file, sort_keys=True, indent=4, separators=(',', ':'))
         f.write(j)
 
