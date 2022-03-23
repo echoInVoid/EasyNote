@@ -12,18 +12,19 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import markdown as md
 
 import myOperations as oper
+from settings import settings
 
 class UIEditWindow(object):
     def setupUi(self, EditWindow: QtWidgets.QWidget):
         self.EditWindow = EditWindow
         self.EditWindow.setObjectName("EditWindow")
-        self.EditWindow.resize(760, 600)
+        self.EditWindow.resize(*settings.windowSize)
 
         self.canEdit = False
         
         #main layout
         self.verticalLayout = QtWidgets.QVBoxLayout(self.EditWindow)
-        self.verticalLayout.setContentsMargins(20, 20, 20, 20)
+        self.verticalLayout.setContentsMargins(*settings.windowContentMargin)
         self.verticalLayout.setObjectName("verticalLayout")
 
         #title

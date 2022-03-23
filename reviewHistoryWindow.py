@@ -19,13 +19,14 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 import matplotlib.pyplot as plt
 import logging as log
 import myOperations as oper
+from settings import settings
 
 
 class UIReviewHistoryWindow(object):
     def setupUi(self, Dialog):
         self.Dialog = Dialog
         self.Dialog.setObjectName("Dialog")
-        self.Dialog.resize(760, 600)
+        self.Dialog.resize(*settings.windowSize)
 
         # widgets for matplotlib
         self.figure = plt.figure()
@@ -36,7 +37,7 @@ class UIReviewHistoryWindow(object):
         plt.xlabel("时间")
 
         self.verticalLayout = QtWidgets.QVBoxLayout(self.Dialog)
-        self.verticalLayout.setContentsMargins(20, 20, 20, 20)
+        self.verticalLayout.setContentsMargins(*settings.windowContentMargin)
         self.verticalLayout.setObjectName("verticalLayout")
         self.verticalLayout.addWidget(self.canvas)
 

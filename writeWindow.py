@@ -11,16 +11,17 @@ import shutil
 from PyQt5 import QtCore, QtGui, QtWidgets
 import myOperations as oper
 import markdown as md
+from settings import settings
 
 
 class UIWriteWindow(object):
     def setupUi(self, WriteWindow: QtWidgets.QWidget):
         self.WriteWindow = WriteWindow
         self.WriteWindow.setObjectName("WriteWindow")
-        self.WriteWindow.resize(760, 600)
+        self.WriteWindow.resize(*settings.windowSize)
 
         self.verticalLayout = QtWidgets.QVBoxLayout(self.WriteWindow)
-        self.verticalLayout.setContentsMargins(20, 20, 20, 20)
+        self.verticalLayout.setContentsMargins(*settings.windowContentMargin)
         self.verticalLayout.setObjectName("verticalLayout")
 
         self.create = QtWidgets.QLabel(self.WriteWindow)

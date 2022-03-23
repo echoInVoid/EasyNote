@@ -12,7 +12,7 @@ import logging
 import time
 from PyQt5 import QtCore, QtWidgets, QtGui
 import markdown as md
-from random import randint
+from random import random
 
 import jieba
 jieba.set_dictionary('.\\dict.txt')
@@ -23,15 +23,16 @@ jieba.initialize()
 
 import myOperations as oper
 from cleanHTML import clean_html
+from settings import settings
 
 
 class UIReviewWindow(object):
     def setupUi(self, ReviewWindow: QtWidgets.QWidget):
         ReviewWindow.setObjectName("ReviewWindow")
-        ReviewWindow.resize(760, 606)
+        ReviewWindow.resize(*settings.windowSize)
 
         self.mainLayout = QtWidgets.QVBoxLayout(ReviewWindow)
-        self.mainLayout.setContentsMargins(10, 10, 10, 10)
+        self.mainLayout.setContentsMargins(*settings.windowContentMargin)
         self.mainLayout.setObjectName("mainLayout")
 
         #title
@@ -105,9 +106,10 @@ class UIReviewWindow(object):
         self.checkBtn.setText(_translate("checkBtn" ,"检查"))
 
     def isValidWord(self, word: str):
-        if set(word) & set(r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""): return False # English puncs
-        chineseP = '＂＃＄％＆＇（）＊＋，－／：；＜＝＞＠［＼］＾＿｀｛｜｝～｟｠｢｣､　、〃〈〉《》「」『』【】〔〕〖〗〘〙〚〛〜〝〞〟〰〾〿–—‘’‛“”„‟…‧﹏﹑﹔·！？｡。'
+        if set(word) & set(settings.enPuncs): return False # English puncs
+        chineseP = settings.zhPuncs
         if set(word) & set(chineseP): return False # Chinese puncs
+        if word in settings.specialWords: return False
         if ' ' in word: return False
         if word.strip() == '': return False
         if len(word) <= 1: return False
@@ -125,7 +127,7 @@ class UIReviewWindow(object):
         filecut = jieba.lcut(pureText)
         self.spaces = []
         for word in filecut:
-            if randint(0,5)==0 and self.isValidWord(word):
+            if random()<=settings.reviewWordProbability and self.isValidWord(word):
                 self.spaces.append(word)
         logging.debug(self.spaces)
 

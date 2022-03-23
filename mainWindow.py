@@ -9,18 +9,20 @@ import os
 import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 import myOperations as oper
+from settings import settings
 
 
 class UIMainWindow(object):
     def setupUi(self, MainWindow: QtWidgets.QMainWindow):
         self.MainWindow = MainWindow
         self.MainWindow.setObjectName("MainWindow")
-        self.MainWindow.resize(800, 600)
+        self.MainWindow.resize(*settings.welcomeWindowSize)
 
         self.centralwidget = QtWidgets.QWidget(self.MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.layout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.layout.setObjectName("layout")
+        self.layout.setContentsMargins(*settings.windowContentMargin)
         self.MainWindow.setCentralWidget(self.centralwidget)
 
         #timer

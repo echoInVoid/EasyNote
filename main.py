@@ -11,20 +11,18 @@ bar.update(5)
 from myOperations import *
 bar.update(10)
 from myWindows import myMain
-bar.update(15)
+bar.update(20)
 
-
-
-def setUp():
-    LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s"
-    log.basicConfig(filename='logs\\%s.log'%time.strftime(r"%Y%m%d-%Hh-%Mm"), level=log.INFO, format=LOG_FORMAT)
+from settings import settings
+def setUp():                                                                                                                                                                    
+    log.basicConfig(filename='.\\logs\\%s.log'%time.strftime(r"%Y%m%d-%Hh-%Mm"), level=settings.logLevel, format=settings.LOG_FORMAT, filemode='w')
 
     log.info("Set-Up completed.")
     clearCache()
 
 def main():
     setUp()
-    bar.update(20)
+    bar.update(25)
 
     try:
         app = QApplication(sys.argv)
@@ -36,8 +34,10 @@ def main():
         print("加载完成")
         sys.exit(app.exec_())
     except Exception as e:
-        log.fatal("\n\tFatal Error: %s\n\tProgram exited."%str(e))
-        sys.exit()
+        import traceback as tb
+        trace = tb.format_exc()
+        log.fatal("\nFatal Error:\n%s\nProgram exited."%trace)
+        sys.exit("\nFatal Error:\n%s\nProgram exited."%trace)
 
 if __name__ == "__main__":
     main()

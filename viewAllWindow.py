@@ -6,20 +6,20 @@
 
 
 import logging
-import time
 from PyQt5 import QtCore, QtGui, QtWidgets
 import myOperations as oper
+from settings import settings
 
 
 class UIViewAllWindow(object):
     def setupUi(self, Widget: QtWidgets.QWidget):
         self.Widget = Widget
         self.Widget.setObjectName("Widget")
-        self.Widget.resize(760, 600)
+        self.Widget.resize(*settings.windowSize)
 
         # layout
         self.layout = QtWidgets.QVBoxLayout(self.Widget)
-        self.layout.setContentsMargins(20, 20, 20, 20)
+        self.layout.setContentsMargins(*settings.windowContentMargin)
         self.layout.setObjectName("layout")
 
         # title
