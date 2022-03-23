@@ -291,6 +291,10 @@ class UIEditWindow(object):
         getImageURL.setObjectName("getImageURL")
         getImageURL.setClearButtonEnabled(True)
         verticalLayout.addWidget(getImageURL)
+        getImageButton = QtWidgets.QPushButton()
+        getImageButton.setObjectName("getImageButton")
+        getImageButton.setText("选择文件")
+        verticalLayout.addWidget(getImageButton)
         line = QtWidgets.QFrame(verticalLayoutWidget)
         line.setFrameShape(QtWidgets.QFrame.HLine)
         line.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -309,6 +313,17 @@ class UIEditWindow(object):
         label.setText("图片路径")
         label_2.setText("图片描述（可选的）")
 
+        def openImage():
+            get = QtWidgets.QFileDialog()
+            get.setWindowTitle("选择图片")
+            get.setWindowFilePath(".")
+            get.setNameFilters(['*.png', '*.jpg', '*.bmp', '*.gif'])
+
+            get.exec()
+            getImageURL.setText(get.selectedFiles()[0])
+        
+        getImageButton.clicked.connect(openImage)
+        
         def insertImage():
             path = getImageURL.text()
             if os.path.isfile(path):
