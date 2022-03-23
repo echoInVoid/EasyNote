@@ -19,7 +19,7 @@ EasyNote是一个帮助你记笔记的软件，基于 PyQt5 实现，支持大�
 `jieba 0.42.1`
 
 ## 开发工具
-主要使用Visual Studio Code，GUI部分由 `pyqt5-tools` 中的 Qt Designer 设计，pyuic5编译。
+主要使用 Visual Studio Code，GUI部分由 `pyqt5-tools` 中的 Qt Designer 设计，pyuic5编译。
 
 ## 运行环境
 `Windows XP及以上`
