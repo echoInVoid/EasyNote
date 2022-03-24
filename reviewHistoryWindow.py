@@ -42,7 +42,7 @@ class UIReviewHistoryWindow(object):
         self.verticalLayout.addWidget(self.canvas)
 
         self.clear = QtWidgets.QPushButton(self.Dialog)
-        self.clear.setStyleSheet("font-family: 微软雅黑; font-size: x-large;")
+        self.clear.setStyleSheet("font-family: Microsoft YaHei UI; font-size: x-large;")
         self.clear.setText("清除历史")
         self.clear.clicked.connect(self.clearHistory)
         self.verticalLayout.addWidget(self.clear)

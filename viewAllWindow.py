@@ -25,7 +25,7 @@ class UIViewAllWindow(object):
         # title
         self.title = QtWidgets.QLabel(self.Widget)
         font = QtGui.QFont()
-        font.setFamily("微软雅黑")
+        font.setFamily("Microsoft YaHei UI")
         font.setPointSize(28)
         self.title.setFont(font)
         self.title.setIndent(6)

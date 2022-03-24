@@ -23,6 +23,7 @@ jieba.initialize()
 
 import myOperations as oper
 from cleanHTML import clean_html
+
 from settings import settings
 
 
@@ -54,7 +55,7 @@ class UIReviewWindow(object):
         self.mainLayout.addWidget(self.line)
 
         self.score = QtWidgets.QLabel()
-        self.score.setStyleSheet("font-size: 30px; font-family: 微软雅黑;")
+        self.score.setStyleSheet("font-size: 30px; font-family: Microsoft YaHei UI;")
         self.score.setText("分数：N/A")
         self.score.setMaximumHeight(40)
         self.mainLayout.addWidget(self.score)
@@ -67,7 +68,7 @@ class UIReviewWindow(object):
         self.text.setSizePolicy(sizePolicy)
         self.text.setMinimumSize(QtCore.QSize(0, 350))
         font = QtGui.QFont()
-        font.setFamily("微软雅黑")
+        font.setFamily("Microsoft YaHei UI")
         font.setPointSize(15)
         self.text.setFont(font)
         self.text.setObjectName("text")
