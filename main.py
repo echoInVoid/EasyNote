@@ -1,4 +1,4 @@
-from os import mkdir
+from functools import wraps
 import progressbar
 bar = progressbar.ProgressBar(max_value=100)
 print("加载中……")

@@ -169,7 +169,7 @@ class UIWriteWindow(object):
     def updatePreview(self):
         richText = str(md.markdown(
             self.getText.toPlainText(),
-            extensions=['markdown.extensions.fenced_code', 'markdown.extensions.codehilite', 'markdown.extensions.extra', ]
+            extensions=['markdown.extensions.codehilite', 'markdown.extensions.extra', ]
         ))
         self.preview.setHtml(richText)
 
@@ -223,7 +223,7 @@ class UIWriteWindow(object):
 
         def insertCode():
             if textEdit.toPlainText():
-                code = "```%s\n%s\n```"%(lineEdit.text(), textEdit.toPlainText())
+                code = "```{ .%s }\n%s\n```"%(lineEdit.text(), textEdit.toPlainText())
                 self.getText.textCursor().insertText(code)
                 self.inputDialog.destroy()
         buttonBox.accepted.connect(insertCode)

@@ -135,8 +135,8 @@ class UIViewAllWindow(object):
     def delNote(self):
         if len(self.listWidget.selectedItems()) == 1:
             oper.delNote(self.listWidget.selectedItems()[0].data(5))
-            self.updateList()
             logging.info("Deleted note %s"%self.listWidget.selectedItems()[0].data(5))
+            self.updateList()
 
     def kill(self):
         self.Widget.destroy()

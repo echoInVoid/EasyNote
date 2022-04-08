@@ -254,7 +254,7 @@ class UIEditWindow(object):
 
         def insertCode():
             if textEdit.toPlainText():
-                code = "```%s\n%s\n```"%(lineEdit.text(), textEdit.toPlainText())
+                code = "```{ .%s }\n%s\n```"%(lineEdit.text(), textEdit.toPlainText())
                 self.getText.textCursor().insertText(code)
                 self.inputDialog.destroy()
         buttonBox.accepted.connect(insertCode)
@@ -320,7 +320,10 @@ class UIEditWindow(object):
             get.setNameFilters(['*.png', '*.jpg', '*.bmp', '*.gif'])
 
             get.exec()
-            getImageURL.setText(get.selectedFiles()[0])
+            while 1:
+                if len(get.selectedFiles()):
+                    getImageURL.setText(get.selectedFiles()[0])
+                    return
         
         getImageButton.clicked.connect(openImage)
         

@@ -18,14 +18,14 @@ def readNotesList():
             try:
                 with open(file, 'r') as f:
                     note = json.load(f)
-            except:
-                log.error("%s is not a readable json file."%file)
+            except Exception as e:
+                log.error("%s is not a readable json file. Message: %s"%(file, str(e)))
             else:
                 noteList.append(note)
     
     return noteList
 
-def save(title, text, ctime=time.localtime(time.time())):
+def save(title:str, text:str, ctime=time.localtime(time.time())):
     filename = "%s"%title
 
     if (not os.path.exists(".\\notes")):
@@ -38,7 +38,7 @@ def save(title, text, ctime=time.localtime(time.time())):
     if os.path.exists(".\\notes\\"+filename): rmtree(".\\notes\\"+filename)
     os.mkdir(".\\notes\\"+filename)
     with open(".\\notes\\%s\\note.json"%filename, 'w') as f:
-        j = json.dumps(contain, sort_keys=True, indent=4, separators=(',', ':'))
+        j = json.dumps(contain, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False)
         f.write(j)
 
     if os.path.isdir(".\\cache"): copytree('.\\cache', '.\\notes\\%s\\images'%filename)
