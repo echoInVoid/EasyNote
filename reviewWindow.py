@@ -137,7 +137,7 @@ class UIReviewWindow(object):
 
         richText = str(md.markdown(
             self.file['text'],
-            extensions=['markdown.extensions.fenced_code', 'markdown.extensions.codehilite', 'markdown.extensions.extra', ]
+            extensions=settings.markdownExt
         ))
         self.text.setHtml(richText)
 

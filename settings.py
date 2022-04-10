@@ -19,6 +19,16 @@ class Settings():
         self.enPuncs = r"""!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~"""
         self.specialWords = set([])
 
+        self.markdownExt = [
+            'markdown.extensions.fenced_code',
+            'markdown.extensions.codehilite',
+            "markdown.extensions.abbr", 
+            "markdown.extensions.attr_list", 
+            "markdown.extensions.def_list", 
+            "markdown.extensions.footnotes", 
+            "markdown.extensions.tables"
+        ]
+
         self.loadSettings()
 
     def loadSettings(self):
