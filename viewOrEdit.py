@@ -200,15 +200,7 @@ class UIEditWindow(object):
     def updatePreview(self):
         richText = str(md.markdown(
             self.getText.toPlainText(),
-            extensions=[
-                'markdown.extensions.fenced_code',
-                'markdown.extensions.codehilite',
-                "markdown.extensions.abbr", 
-                "markdown.extensions.attr_list", 
-                "markdown.extensions.def_list", 
-                "markdown.extensions.footnotes", 
-                "markdown.extensions.tables"
-            ]
+            extensions=settings.markdownExt
         ))
         self.preview.setHtml(richText)
 
