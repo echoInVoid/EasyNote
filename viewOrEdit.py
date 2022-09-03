@@ -108,7 +108,7 @@ class UIEditWindow(object):
         self.edit = QtWidgets.QHBoxLayout()
         self.edit.setObjectName("edit")
         # input area
-        self.getText = QtWidgets.QTextEdit(self.EditWindow)
+        self.getText = QtWidgets.QPlainTextEdit(self.EditWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(11)
@@ -116,8 +116,7 @@ class UIEditWindow(object):
         self.getText.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.getText.setAutoFillBackground(False)
         self.getText.setObjectName("getText")
-        self.getText.setAcceptRichText(False)
-        self.getText.setReadOnly(False)
+        self.getText.setReadOnly(True)
         self.getText.textChanged.connect(self.updatePreview)
         self.edit.addWidget(self.getText)
         # markdown preview
@@ -180,7 +179,7 @@ class UIEditWindow(object):
     def setFile(self, file):
         self.file = file
         self.getTitle.setText(file['title'])
-        self.getText.setText(file['text'])
+        self.getText.setPlainText(file['text'])
             
     def kill(self):
         self.EditWindow.destroy()
@@ -201,7 +200,7 @@ class UIEditWindow(object):
         richText = str(md.markdown(
             self.getText.toPlainText(),
             extensions=settings.markdownExt
-        ))
+        )).replace('\x0245', '\\').replace('\x03', '-')
         self.preview.setHtml(richText)
 
     def openLink(self, link: QtCore.QUrl):
@@ -331,10 +330,10 @@ class UIEditWindow(object):
             path = getImageURL.text()
             if os.path.isfile(path):
                 fType = os.path.splitext(path)[-1]
-                cPath = ".\\\\cache\\\\%d%s"%(hash(path), fType)
+                cPath = ".\\cache\\%d%s"%(hash(path), fType)
                 shutil.copyfile(path, cPath)
                 
-                text = '![%s](%s "%s")'%(getImageText.text().replace(' ', '-'), cPath, getImageText.text())
+                text = '<img src="%s" alt="%s" width=450 />'%(cPath, getImageText.text())
                 self.getText.textCursor().insertText(text)
                 self.inputDialog.destroy()
                 return
@@ -395,6 +394,7 @@ class UIEditWindow(object):
             def insertLink():
                 if getLinkURL.text():
                     self.getText.textCursor().insertText("[%s](%s)"%(getLinkName.text(), getLinkURL.text()))
+                self.inputDialog.destroy()
             buttonBox.accepted.connect(insertLink)
             buttonBox.rejected.connect(self.inputDialog.destroy)
             

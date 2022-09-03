@@ -1,7 +1,7 @@
-from functools import wraps
 import progressbar
-bar = progressbar.ProgressBar(max_value=100)
+bar = progressbar.ProgressBar(maxval=100)
 print("加载中……")
+bar.start()
 
 import logging as log
 import sys

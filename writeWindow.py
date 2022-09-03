@@ -100,7 +100,7 @@ class UIWriteWindow(object):
         self.edit = QtWidgets.QHBoxLayout()
         self.edit.setObjectName("edit")
         # input area
-        self.getText = QtWidgets.QTextEdit(self.WriteWindow)
+        self.getText = QtWidgets.QPlainTextEdit(self.WriteWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(11)
@@ -108,7 +108,6 @@ class UIWriteWindow(object):
         self.getText.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.getText.setAutoFillBackground(False)
         self.getText.setObjectName("getText")
-        self.getText.setAcceptRichText(False)
         self.getText.textChanged.connect(self.updatePreview)
         self.edit.addWidget(self.getText)
         # markdown preview
@@ -231,7 +230,6 @@ class UIWriteWindow(object):
 
         self.inputDialog.show()
 
-
     def addImage(self):
         self.inputDialog = QtWidgets.QDialog()
         self.inputDialog.setObjectName("Dialog")
@@ -289,7 +287,10 @@ class UIWriteWindow(object):
             get.setNameFilters(['*.png', '*.jpg', '*.bmp', '*.gif'])
 
             get.exec()
-            getImageURL.setText(get.selectedFiles()[0])
+            while 1:
+                if len(get.selectedFiles()):
+                    getImageURL.setText(get.selectedFiles()[0])
+                    return
         
         getImageButton.clicked.connect(openImage)
         
@@ -297,10 +298,10 @@ class UIWriteWindow(object):
             path = getImageURL.text()
             if os.path.isfile(path):
                 fType = os.path.splitext(path)[-1]
-                cPath = ".\\\\cache\\\\%d%s"%(hash(path), fType)
+                cPath = ".\\cache\\%d%s"%(hash(path), fType)
                 shutil.copyfile(path, cPath)
                 
-                text = '![%s](%s "%s")'%(getImageText.text().replace(' ', '-'), cPath, getImageText.text())
+                text = '<img src="%s" alt="%s" width=450 />'%(cPath, getImageText.text())
                 self.getText.textCursor().insertText(text)
                 self.inputDialog.destroy()
                 return
@@ -361,6 +362,7 @@ class UIWriteWindow(object):
             def insertLink():
                 if getLinkURL.text():
                     self.getText.textCursor().insertText("[%s](%s)"%(getLinkName.text(), getLinkURL.text()))
+                self.inputDialog.destroy()
             buttonBox.accepted.connect(insertLink)
             buttonBox.rejected.connect(self.inputDialog.destroy)
             
