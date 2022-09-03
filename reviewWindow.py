@@ -133,7 +133,7 @@ class UIReviewWindow(object):
         logging.debug(self.spaces)
 
         for i in range(len(self.spaces)):
-            self.file['text'] = self.file['text'].replace(self.spaces[i], "___%d___"%(i+1), 1)
+            self.file['text'] = self.file['text'].replace(self.spaces[i], "___%d___"%(i+1))
 
         richText = str(md.markdown(
             self.file['text'],
