@@ -157,8 +157,12 @@ class UIReviewWindow(object):
             if textField.text() == self.spaces[i]:
                 score += 1
                 textField.setStyleSheet("background-color: rgba(58,255,78,97);")
+                t = self.text.toHtml().replace("___%d___"%i, "<strong style=background-color:rgba(58,255,78,97)>___%d___</strong>"%i)
+                self.text.setHtml(t)
             else:
                 textField.setStyleSheet("background-color: rgba(255,135,143,147);")
+                t = self.text.toHtml().replace("___%d___"%i, "<strong style=background-color:rgba(255,135,143,147)>___%d___</strong>"%i)
+                self.text.setHtml(t)
         
         score = score / self.form.rowCount() * 10
         self.score.setText("分数：%d"%score)
