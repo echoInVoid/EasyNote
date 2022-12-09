@@ -139,5 +139,4 @@ class UIViewAllWindow(object):
             self.updateList()
 
     def kill(self):
-        self.Widget.destroy()
-        del self
+        oper.returnToMain()

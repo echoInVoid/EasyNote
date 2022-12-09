@@ -151,8 +151,7 @@ class UIWriteWindow(object):
         self.preview.setPlaceholderText(_translate("WriteWindow", "笔记预览"))
         
     def kill(self):
-        self.WriteWindow.destroy()
-        del self
+        oper.returnToMain()
 
     def accept(self):
         title = self.getTitle.text()
@@ -166,7 +165,7 @@ class UIWriteWindow(object):
         self.kill()
 
     def updatePreview(self):
-        richText = str(md.markdown(
+        richText = str(md.markdown( 
             self.getText.toPlainText(),
             extensions=settings.markdownExt
         ))

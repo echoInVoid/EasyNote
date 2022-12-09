@@ -5,6 +5,12 @@ import time
 import os
 from myWindows import *
 
+def clearCache():
+    if os.path.isdir(".\\cache"):
+        rmtree(".\\cache")
+        os.mkdir(".\\cache")
+        log.info("Cleared cache.")
+
 def readNotesList():
     noteList = []
 
@@ -48,24 +54,31 @@ def save(title:str, text:str, ctime=time.localtime(time.time())):
     log.info("Saved '%s' ."%filename)
     return 0
 
-def write():
-    writeWid = myWrite()
+def setCurrentWid(baseWid: QMainWindow, widget):
+    baseWid.setCentralWidget(widget)
+
+def writeNote(baseWid):
+    writeWid = myWrite(baseWid)
+    setCurrentWid(baseWid, writeWid)
     writeWid.show()
     return writeWid
 
-def viewAll():
-    viewWid = myViewAll()
+def viewAll(baseWid):
+    viewWid = myViewAll(baseWid)
+    setCurrentWid(baseWid, viewWid)
     viewWid.show()
     return viewWid
 
 def viewFile(file):
+    from settings import settings
     filepath = ".\\notes\\%s"%file.data(5)
     if os.path.exists(filepath):
         clearCache()
         os.rmdir(".\\cache")
         copytree(filepath+"\\images", ".\\cache")
 
-        viewWid = myEdit()
+        viewWid = myEdit(settings.baseWid)
+        setCurrentWid(settings.baseWid, viewWid)
         viewWid.show()
 
         with open(filepath+"\\note.json", 'r') as f:
@@ -95,6 +108,16 @@ def reviewNote(file):
         log.error("File %s doesn't exist!"%filepath)
         return None
 
+def returnToMain():
+    # print("returnToMain start")
+    from settings import settings
+    baseWid = settings.baseWid
+    baseWid.centralWidget().destroy()
+    mainWid = myMain(baseWid)
+    baseWid.setCentralWidget(mainWid)
+    mainWid.show()
+    baseWid.show()
+    # print("returnToMain end")
 
 def saveScore(title: str, score: int, ctime):
     path = ".\\notes\\%s\\note.json"%title
@@ -156,9 +179,3 @@ def delNote(fileName):
             else:
                 delHistory(name['title'])
         rmtree(".\\notes\\%s"%fileName)
-
-def clearCache():
-    if os.path.isdir(".\\cache"):
-        rmtree(".\\cache")
-        os.mkdir(".\\cache")
-        log.info("Cleared cache.")

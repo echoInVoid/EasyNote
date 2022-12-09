@@ -26,7 +26,7 @@ class UIReviewHistoryWindow(object):
     def setupUi(self, Dialog):
         self.Dialog = Dialog
         self.Dialog.setObjectName("Dialog")
-        self.Dialog.resize(*settings.windowSize)
+        self.Dialog.resize(*settings.infoDialogSize)
 
         # widgets for matplotlib
         self.figure = plt.figure()

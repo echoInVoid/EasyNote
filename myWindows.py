@@ -1,6 +1,5 @@
 import sys
 from PyQt5.QtWidgets import QMainWindow, QWidget
-from PyQt5 import QtGui
 
 from mainWindow import UIMainWindow
 from reviewHistoryWindow import UIReviewHistoryWindow
@@ -9,18 +8,18 @@ from viewAllWindow import UIViewAllWindow
 from viewOrEdit import UIEditWindow
 from writeWindow import UIWriteWindow
 
-class myMain(QMainWindow, UIMainWindow):
+class myMain(QWidget, UIMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
 
-    def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
-        sys.exit(0)
+    # def closeEvent(self, a0: QtGui.QCloseEvent) -> None:
+    #     sys.exit(0)
 
 class myWrite(QWidget, UIWriteWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowModality(0)
+        # self.setWindowModality(0)
         self.setupUi(self)
 
 class myViewAll(QWidget, UIViewAllWindow):

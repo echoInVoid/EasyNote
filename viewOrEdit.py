@@ -182,8 +182,7 @@ class UIEditWindow(object):
         self.getText.setPlainText(file['text'])
             
     def kill(self):
-        self.EditWindow.destroy()
-        del self
+        oper.returnToMain()
 
     def accept(self):
         title = self.getTitle.text()

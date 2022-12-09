@@ -13,17 +13,15 @@ from settings import settings
 
 
 class UIMainWindow(object):
-    def setupUi(self, MainWindow: QtWidgets.QMainWindow):
+    def setupUi(self, MainWindow: QtWidgets.QWidget):
         self.MainWindow = MainWindow
         self.MainWindow.setObjectName("MainWindow")
         self.MainWindow.resize(*settings.welcomeWindowSize)
 
-        self.centralwidget = QtWidgets.QWidget(self.MainWindow)
-        self.centralwidget.setObjectName("centralwidget")
-        self.layout = QtWidgets.QVBoxLayout(self.centralwidget)
+        self.layout = QtWidgets.QVBoxLayout(self.MainWindow)
         self.layout.setObjectName("layout")
         self.layout.setContentsMargins(*settings.windowContentMargin)
-        self.MainWindow.setCentralWidget(self.centralwidget)
+        MainWindow.setLayout(self.layout)
 
         #timer
         self.timer = QtCore.QTimer(self.MainWindow)
@@ -37,7 +35,7 @@ class UIMainWindow(object):
         self.layout.addLayout(self.welcome)
 
         #welcome text
-        self.welcomeText = QtWidgets.QLabel(self.centralwidget)
+        self.welcomeText = QtWidgets.QLabel(self.MainWindow)
         font = QtGui.QFont()
         font.setFamily("Microsoft YaHei UI")
         font.setPointSize(36)
@@ -54,7 +52,7 @@ class UIMainWindow(object):
         self.welcome.addWidget(self.welcomeText)
 
         #clock
-        self.time = QtWidgets.QLCDNumber(self.centralwidget)
+        self.time = QtWidgets.QLCDNumber(self.MainWindow)
         self.time.setObjectName("time")
         self.time.setDigitCount(8)
         self.time.setMaximumHeight(70)
@@ -62,7 +60,7 @@ class UIMainWindow(object):
         self.welcome.addWidget(self.time)
 
         #welcome picture
-        self.welcomePic = QtWidgets.QLabel(self.centralwidget)
+        self.welcomePic = QtWidgets.QLabel(self.MainWindow)
         self.welcomePic.setText("")
         self.welcomePic.setPixmap(QtGui.QPixmap(".\\resource\\welcome.gif"))
         self.welcomePic.setScaledContents(True)
@@ -70,55 +68,19 @@ class UIMainWindow(object):
         self.welcomePic.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         self.layout.addWidget(self.welcomePic)
 
-        #menubar
-        self.menubar = QtWidgets.QMenuBar(self.MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 818, 23))
-        self.menubar.setObjectName("menubar")
-        #main
-        self.main = QtWidgets.QMenu(self.menubar) #main page (1st menu)
-        self.main.setObjectName("main")
-        self.menubar.addAction(self.main.menuAction())
-        # #file
-        # self.file = QtWidgets.QMenu(self.menubar) #about file (1st menu)
-        # self.file.setObjectName("file")
-        # # self.importf = QtWidgets.QAction(self.MainWindow) #import note from file
-        # # self.importf.setObjectName("importf")
-        # # #TODO: let user be able to import notes from file/folder
-        # # self.file.addAction(self.importf)
-        # self.menubar.addAction(self.file.menuAction())
-        #edit
-        self.edit = QtWidgets.QMenu(self.menubar) #edit note (1st menu)
-        self.edit.setObjectName("edit")
-        self.create = QtWidgets.QAction(self.MainWindow) #create note
-        self.create.setObjectName("create")
-        self.create.triggered.connect(oper.write)
-        self.edit.addAction(self.create)
-        self.view = QtWidgets.QAction(self.MainWindow) #view all notes
-        self.view.setObjectName("view")
-        self.view.triggered.connect(oper.viewAll)
-        self.edit.addAction(self.view)
-        self.menubar.addAction(self.edit.menuAction())
-        #set as menubar
-        self.MainWindow.setMenuBar(self.menubar)
-
-        #status bar
-        self.statusbar = QtWidgets.QStatusBar(self.MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        self.MainWindow.setStatusBar(self.statusbar)
-
         # control layout
         self.buttons = QtWidgets.QHBoxLayout()
         self.buttons.setObjectName("buttons")
         self.layout.addLayout(self.buttons)
 
         #help button
-        self.helpButton = QtWidgets.QPushButton(self.centralwidget)
+        self.helpButton = QtWidgets.QPushButton(self.MainWindow)
         self.helpButton.setObjectName("helpButton")
         self.buttons.addWidget(self.helpButton)
         self.helpButton.clicked.connect(self.openHelp)
 
         #exit button
-        self.exitButton = QtWidgets.QPushButton(self.centralwidget)
+        self.exitButton = QtWidgets.QPushButton(self.MainWindow)
         self.exitButton.setObjectName("exitButton")
         self.buttons.addWidget(self.exitButton)
         self.exitButton.clicked.connect(QtWidgets.QApplication.instance().quit)
@@ -130,10 +92,6 @@ class UIMainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         self.MainWindow.setWindowTitle(_translate("MainWindow", "EasyNote简单笔记"))
         self.welcomeText.setText(_translate("MainWindow", "欢迎!"))
-        self.main.setTitle(_translate("MainWindow", "主页"))
-        self.edit.setTitle(_translate("MainWindow", "编辑"))
-        self.create.setText(_translate("MainWindow", "创建笔记"))
-        self.view.setText(_translate("MainWindow", "浏览笔记"))
         self.exitButton.setText(_translate("MainWindow", "退出"))
         self.helpButton.setText(_translate("MainWindow", "帮助"))
 

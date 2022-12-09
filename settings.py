@@ -7,8 +7,9 @@ class Settings():
     def __init__(self):
         self.LOG_FORMAT = "[%(asctime)s][%(levelname)s][%(filename)s:%(lineno)d] %(message)s"
 
-        self.welcomeWindowSize = [800,600]
-        self.windowSize = [760,600]
+        self.welcomeWindowSize = [840,600]
+        self.windowSize = [840,600]
+        self.infoDialogSize = [500,400]
         self.windowContentMargin = [20,20,20,20]
         self.logLevel = logging.INFO
         
@@ -28,6 +29,8 @@ class Settings():
             "markdown.extensions.footnotes", 
             "markdown.extensions.tables"
         ]
+
+        self.baseWid = None
 
         self.loadSettings()
 
