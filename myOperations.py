@@ -4,6 +4,7 @@ from shutil import copytree, rmtree
 import time
 import os
 from myWindows import *
+from settings import settings
 
 def clearCache():
     if os.path.isdir(".\\cache"):
@@ -54,23 +55,25 @@ def save(title:str, text:str, ctime=time.localtime(time.time())):
     log.info("Saved '%s' ."%filename)
     return 0
 
-def setCurrentWid(baseWid: QMainWindow, widget):
+def setCurrentWid(widget):
+    baseWid = settings.baseWid
     baseWid.setCentralWidget(widget)
 
-def writeNote(baseWid):
+def writeNote():
+    baseWid = settings.baseWid
     writeWid = myWrite(baseWid)
-    setCurrentWid(baseWid, writeWid)
+    setCurrentWid(writeWid)
     writeWid.show()
     return writeWid
 
-def viewAll(baseWid):
+def viewAll():
+    baseWid = settings.baseWid
     viewWid = myViewAll(baseWid)
-    setCurrentWid(baseWid, viewWid)
+    setCurrentWid(viewWid)
     viewWid.show()
     return viewWid
 
 def viewFile(file):
-    from settings import settings
     filepath = ".\\notes\\%s"%file.data(5)
     if os.path.exists(filepath):
         clearCache()
@@ -78,7 +81,7 @@ def viewFile(file):
         copytree(filepath+"\\images", ".\\cache")
 
         viewWid = myEdit(settings.baseWid)
-        setCurrentWid(settings.baseWid, viewWid)
+        setCurrentWid(viewWid)
         viewWid.show()
 
         with open(filepath+"\\note.json", 'r') as f:
@@ -109,15 +112,12 @@ def reviewNote(file):
         return None
 
 def returnToMain():
-    # print("returnToMain start")
-    from settings import settings
     baseWid = settings.baseWid
     baseWid.centralWidget().destroy()
     mainWid = myMain(baseWid)
     baseWid.setCentralWidget(mainWid)
     mainWid.show()
     baseWid.show()
-    # print("returnToMain end")
 
 def saveScore(title: str, score: int, ctime):
     path = ".\\notes\\%s\\note.json"%title

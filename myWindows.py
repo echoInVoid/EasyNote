@@ -1,12 +1,17 @@
-import sys
-from PyQt5.QtWidgets import QMainWindow, QWidget
+from PyQt5.QtWidgets import QWidget, QMainWindow
 
+from baseWindow import UIBaseWindow
 from mainWindow import UIMainWindow
 from reviewHistoryWindow import UIReviewHistoryWindow
 from reviewWindow import UIReviewWindow
 from viewAllWindow import UIViewAllWindow
 from viewOrEdit import UIEditWindow
 from writeWindow import UIWriteWindow
+
+class myBase(QMainWindow, UIBaseWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setupUi(self)
 
 class myMain(QWidget, UIMainWindow):
     def __init__(self, parent=None):

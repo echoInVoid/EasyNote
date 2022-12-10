@@ -27,37 +27,7 @@ setUp()
 bar.update(25)
 
 app = QApplication(sys.argv)
-baseWid = QMainWindow()
-baseWid.resize(*settings.welcomeWindowSize)
-baseWid.setWindowTitle("EasyNote")
-
-#menubar
-menubar = QtWidgets.QMenuBar(baseWid)
-menubar.setGeometry(QtCore.QRect(0, 0, 840, 25))
-menubar.setObjectName("menubar")
-#main
-main_ = QtWidgets.QMenu(menubar) # main page (1st menu)
-main_.setObjectName("main")
-main_.setTitle("主页")
-menubar.addAction(main_.menuAction())
-#edit
-edit = QtWidgets.QMenu(menubar) # edit note (1st menu)
-edit.setObjectName("edit")
-edit.setTitle("编辑")
-create = QtWidgets.QAction(baseWid) # create note
-create.setObjectName("create")
-create.setText("创建笔记")
-create.triggered.connect(lambda x: writeNote(baseWid))
-edit.addAction(create)
-view = QtWidgets.QAction(baseWid) # view all notes
-view.setObjectName("view")
-view.setText("浏览笔记")
-view.triggered.connect(lambda x: viewAll(baseWid))
-edit.addAction(view)
-menubar.addAction(edit.menuAction())
-# set as menubar
-baseWid.setMenuBar(menubar)
-
+baseWid = myBase()
 bar.update(50)
 mainWid = myMain(baseWid)
 baseWid.setCentralWidget(mainWid)
