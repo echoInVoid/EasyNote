@@ -8,7 +8,7 @@ class UIMainWindow(object):
     def setupUi(self, MainWindow: QtWidgets.QWidget):
         self.MainWindow = MainWindow
         self.MainWindow.setObjectName("MainWindow")
-        self.MainWindow.resize(*settings.welcomeWindowSize)
+        self.MainWindow.resize(*settings.baseWindowSize)
 
         self.layout = QtWidgets.QVBoxLayout(self.MainWindow)
         self.layout.setObjectName("layout")

@@ -1,0 +1,24 @@
+{
+    "specialWords": [
+        "a",
+        "an",
+        "的",
+        "了",
+        "把",
+        "被"
+    ],
+    "baseWindowSize": [1080,800],
+    "windowSize": [840,600],
+    "infoDialogSize": [500,400],
+    "windowContentMargin": [20,20,20,20],
+    "reviewWordProability": 0.2,
+    "markdownExt": [
+        "markdown.extensions.fenced_code",
+        "markdown.extensions.codehilite",
+        "markdown.extensions.abbr", 
+        "markdown.extensions.attr_list", 
+        "markdown.extensions.def_list", 
+        "markdown.extensions.footnotes", 
+        "markdown.extensions.tables"
+    ]
+}

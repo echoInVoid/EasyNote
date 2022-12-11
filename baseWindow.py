@@ -6,7 +6,7 @@ from settings import settings
 class UIBaseWindow(object):
     def setupUi(self, baseWid: QMainWindow):
         self.baseWid = baseWid
-        self.baseWid.resize(*settings.welcomeWindowSize)
+        self.baseWid.resize(*settings.baseWindowSize)
         self.baseWid.setWindowTitle("EasyNote")
 
         #menubar
