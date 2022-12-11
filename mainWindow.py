@@ -1,14 +1,6 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'ui/main.ui'
-#
-# Created by: PyQt5 UI code generator 5.15.4
-
-
 import os
 import time
 from PyQt5 import QtCore, QtGui, QtWidgets
-import myOperations as oper
 from settings import settings
 
 

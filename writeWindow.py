@@ -1,13 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'ui/write.ui'
-#
-# Created by: PyQt5 UI code generator 5.15.4
-
-
 import logging
 import os
-import shutil
 from PyQt5 import QtCore, QtGui, QtWidgets
 import myOperations as oper
 import markdown as md
@@ -84,15 +76,15 @@ class UIWriteWindow(object):
         self.buttons.setObjectName("buttons")
         self.inImage = QtWidgets.QPushButton(self.WriteWindow)
         self.inImage.setObjectName("inImage")
-        self.inImage.clicked.connect(self.addImage)
+        self.inImage.clicked.connect(lambda x: oper.getMdImageDialog(self))
         self.buttons.addWidget(self.inImage)
         self.inCode = QtWidgets.QPushButton(self.WriteWindow)
         self.inCode.setObjectName("inCode")
-        self.inCode.clicked.connect(self.addCode)
+        self.inCode.clicked.connect(lambda x: oper.getMdCodeDialog(self))
         self.buttons.addWidget(self.inCode)
         self.inLink = QtWidgets.QPushButton(self.WriteWindow)
         self.inLink.setObjectName("inLink")
-        self.inLink.clicked.connect(self.addLink)
+        self.inLink.clicked.connect(lambda x: oper.getMdLinkDialog(self))
         self.buttons.addWidget(self.inLink)
         self.texts.addLayout(self.buttons)
 
@@ -174,195 +166,14 @@ class UIWriteWindow(object):
     def openLink(self, link: QtCore.QUrl):
         os.system('start "" "%s"'%link.url())
 
-    def addCode(self):
-        self.inputDialog = QtWidgets.QDialog()
-        self.inputDialog.setObjectName("Dialog")
-        self.inputDialog.resize(400, 300)
-        buttonBox = QtWidgets.QDialogButtonBox(self.inputDialog)
-        buttonBox.setGeometry(QtCore.QRect(30, 260, 341, 32))
-        buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        buttonBox.setObjectName("buttonBox")
+    def addCode(self, lang, code):
+        mdCode = "```{ .%s }\n%s\n```"%(lang, code)
+        self.getText.textCursor().insertText(mdCode)
 
-        verticalLayoutWidget = QtWidgets.QWidget(self.inputDialog)
-        verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 361, 241))
-        verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        verticalLayout = QtWidgets.QVBoxLayout(verticalLayoutWidget)
-        verticalLayout.setContentsMargins(0, 0, 0, 0)
-        verticalLayout.setObjectName("verticalLayout")
+    def addImage(self, text):
+        self.getText.textCursor().insertText(text)
 
-        label = QtWidgets.QLabel(verticalLayoutWidget)
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei UI")
-        font.setPointSize(11)
-        label.setFont(font)
-        label.setObjectName("label")
-        verticalLayout.addWidget(label)
-        lineEdit = QtWidgets.QLineEdit(verticalLayoutWidget)
-        lineEdit.setObjectName("lineEdit")
-        verticalLayout.addWidget(lineEdit)
-        line = QtWidgets.QFrame(verticalLayoutWidget)
-        line.setFrameShape(QtWidgets.QFrame.HLine)
-        line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        line.setObjectName("line")
-        verticalLayout.addWidget(line)
-        label_2 = QtWidgets.QLabel(verticalLayoutWidget)
-        label_2.setFont(font)
-        label_2.setObjectName("label_2")
-        verticalLayout.addWidget(label_2)
-        textEdit = QtWidgets.QTextEdit(verticalLayoutWidget)
-        textEdit.setObjectName("textEdit")
-        textEdit.setAcceptRichText(False)
-        verticalLayout.addWidget(textEdit)
-
-        self.inputDialog.setWindowTitle("插入代码")
-        label.setText("语言（可选的）")
-        label_2.setText("代码")
-
-        def insertCode():
-            if textEdit.toPlainText():
-                code = "```{ .%s }\n%s\n```"%(lineEdit.text(), textEdit.toPlainText())
-                self.getText.textCursor().insertText(code)
-                self.inputDialog.destroy()
-        buttonBox.accepted.connect(insertCode)
-        buttonBox.rejected.connect(self.inputDialog.destroy)
-
-        self.inputDialog.show()
-
-    def addImage(self):
-        self.inputDialog = QtWidgets.QDialog()
-        self.inputDialog.setObjectName("Dialog")
-        self.inputDialog.resize(400, 300)
-        buttonBox = QtWidgets.QDialogButtonBox(self.inputDialog)
-        buttonBox.setGeometry(QtCore.QRect(30, 260, 341, 32))
-        buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-        buttonBox.setObjectName("buttonBox")
-
-        verticalLayoutWidget = QtWidgets.QWidget(self.inputDialog)
-        verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 361, 241))
-        verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-        verticalLayout = QtWidgets.QVBoxLayout(verticalLayoutWidget)
-        verticalLayout.setContentsMargins(0, 0, 0, 0)
-        verticalLayout.setObjectName("verticalLayout")
-
-        label = QtWidgets.QLabel(verticalLayoutWidget)
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei UI")
-        font.setPointSize(11)
-        label.setFont(font)
-        label.setObjectName("label")
-        verticalLayout.addWidget(label)
-        getImageURL = QtWidgets.QLineEdit(verticalLayoutWidget)
-        getImageURL.setObjectName("getImageURL")
-        getImageURL.setClearButtonEnabled(True)
-        verticalLayout.addWidget(getImageURL)
-        getImageButton = QtWidgets.QPushButton()
-        getImageButton.setObjectName("getImageButton")
-        getImageButton.setText("选择文件")
-        verticalLayout.addWidget(getImageButton)
-        line = QtWidgets.QFrame(verticalLayoutWidget)
-        line.setFrameShape(QtWidgets.QFrame.HLine)
-        line.setFrameShadow(QtWidgets.QFrame.Sunken)
-        line.setObjectName("line")
-        verticalLayout.addWidget(line)
-        label_2 = QtWidgets.QLabel(verticalLayoutWidget)
-        label_2.setFont(font)
-        label_2.setObjectName("label_2")
-        verticalLayout.addWidget(label_2)
-        getImageText = QtWidgets.QLineEdit(verticalLayoutWidget)
-        getImageText.setObjectName("getImageText")
-        getImageText.setClearButtonEnabled(True)
-        verticalLayout.addWidget(getImageText)
-
-        self.inputDialog.setWindowTitle("插入图片")
-        label.setText("图片路径")
-        label_2.setText("图片描述（可选的）")
-
-        def openImage():
-            get = QtWidgets.QFileDialog()
-            get.setWindowTitle("选择图片")
-            get.setWindowFilePath(".")
-            get.setNameFilters(['*.png', '*.jpg', '*.bmp', '*.gif'])
-
-            get.exec()
-            while 1:
-                if len(get.selectedFiles()):
-                    getImageURL.setText(get.selectedFiles()[0])
-                    return
-        
-        getImageButton.clicked.connect(openImage)
-        
-        def insertImage():
-            path = getImageURL.text()
-            if os.path.isfile(path):
-                fType = os.path.splitext(path)[-1]
-                cPath = ".\\cache\\%d%s"%(hash(path), fType)
-                shutil.copyfile(path, cPath)
-                
-                text = '<img src="%s" alt="%s" width=450 />'%(cPath, getImageText.text())
-                self.getText.textCursor().insertText(text)
-                self.inputDialog.destroy()
-                return
-            else:
-                QtWidgets.QMessageBox().warning(None, "警告", "%s不是支持的文件"%path)
-                logging.warning('"%s" cannot be copied!'%path)
-        buttonBox.accepted.connect(insertImage)
-        buttonBox.rejected.connect(self.inputDialog.destroy)
-
-        self.inputDialog.show()
-
-    def addLink(self):
-            self.inputDialog = QtWidgets.QDialog()
-            self.inputDialog.setObjectName("Dialog")
-            self.inputDialog.resize(400, 300)
-            buttonBox = QtWidgets.QDialogButtonBox(self.inputDialog)
-            buttonBox.setGeometry(QtCore.QRect(30, 260, 341, 32))
-            buttonBox.setOrientation(QtCore.Qt.Horizontal)
-            buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
-            buttonBox.setObjectName("buttonBox")
-
-            verticalLayoutWidget = QtWidgets.QWidget(self.inputDialog)
-            verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 361, 241))
-            verticalLayoutWidget.setObjectName("verticalLayoutWidget")
-            verticalLayout = QtWidgets.QVBoxLayout(verticalLayoutWidget)
-            verticalLayout.setContentsMargins(0, 0, 0, 0)
-            verticalLayout.setObjectName("verticalLayout")
-
-            label = QtWidgets.QLabel(verticalLayoutWidget)
-            font = QtGui.QFont()
-            font.setFamily("Microsoft YaHei UI")
-            font.setPointSize(11)
-            label.setFont(font)
-            label.setObjectName("label")
-            verticalLayout.addWidget(label)
-            getLinkName = QtWidgets.QLineEdit(verticalLayoutWidget)
-            getLinkName.setObjectName("getLinkName")
-            getLinkName.setClearButtonEnabled(True)
-            verticalLayout.addWidget(getLinkName)
-            line = QtWidgets.QFrame(verticalLayoutWidget)
-            line.setFrameShape(QtWidgets.QFrame.HLine)
-            line.setFrameShadow(QtWidgets.QFrame.Sunken)
-            line.setObjectName("line")
-            verticalLayout.addWidget(line)
-            label_2 = QtWidgets.QLabel(verticalLayoutWidget)
-            label_2.setFont(font)
-            label_2.setObjectName("label_2")
-            verticalLayout.addWidget(label_2)
-            getLinkURL = QtWidgets.QLineEdit(verticalLayoutWidget)
-            getLinkURL.setObjectName("getLinkURL")
-            getLinkURL.setClearButtonEnabled(True)
-            verticalLayout.addWidget(getLinkURL)
-
-            self.inputDialog.setWindowTitle("插入链接")
-            label.setText("链接名称（可选的）")
-            label_2.setText("链接地址")
-
-            def insertLink():
-                if getLinkURL.text():
-                    self.getText.textCursor().insertText("[%s](%s)"%(getLinkName.text(), getLinkURL.text()))
-                self.inputDialog.destroy()
-            buttonBox.accepted.connect(insertLink)
-            buttonBox.rejected.connect(self.inputDialog.destroy)
-            
-            self.inputDialog.show()
+    def addLink(self, name, url):
+        if url and name:
+            self.getText.textCursor().insertText("[%s](%s)"%(name, url))
+        else: self.getText.textCursor().insertText("<%s>"%(url))

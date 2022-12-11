@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'ui/viewAll.ui'
-#
-# Created by: PyQt5 UI code generator 5.15.4
-
-
 import logging
 from PyQt5 import QtCore, QtGui, QtWidgets
 import myOperations as oper

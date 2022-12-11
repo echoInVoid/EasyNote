@@ -7,7 +7,6 @@ import logging as log
 import sys
 
 from PyQt5.QtWidgets import QApplication
-from PyQt5 import QtWidgets, QtCore
 bar.update(5)
 
 from myOperations import *
@@ -45,5 +44,5 @@ except Exception as e:
     import traceback as tb
     trace = tb.format_exc()
     log.fatal("\nFatal Error:\n%s\nProgram exited."%trace)
-    clearCache()
+    clearCache()  
     sys.exit("\nFatal Error:\n%s\nProgram exited."%trace)

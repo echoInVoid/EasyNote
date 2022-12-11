@@ -1,6 +1,7 @@
 import json
 import logging as log
 from shutil import copytree, rmtree
+import shutil
 import time
 import os
 from myWindows import *
@@ -99,7 +100,8 @@ def reviewNote(file):
         clearCache()
         os.rmdir(".\\cache")
         copytree(filepath+"\\images", ".\\cache")
-        viewWid = myReview()
+        viewWid = myReview(settings.baseWid)
+        setCurrentWid(viewWid)
         viewWid.show()
 
         with open(filepath+"\\note.json", 'r') as f:
@@ -179,3 +181,208 @@ def delNote(fileName):
             else:
                 delHistory(name['title'])
         rmtree(".\\notes\\%s"%fileName)
+
+def getMdCodeDialog(callWid):
+    from PyQt5 import QtWidgets, QtCore, QtGui
+
+    inputDialog = QtWidgets.QDialog()
+    inputDialog.setObjectName("Dialog")
+    inputDialog.resize(400, 300)
+    buttonBox = QtWidgets.QDialogButtonBox(inputDialog)
+    buttonBox.setGeometry(QtCore.QRect(30, 260, 341, 32))
+    buttonBox.setOrientation(QtCore.Qt.Horizontal)
+    buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+    buttonBox.setObjectName("buttonBox")
+
+    verticalLayoutWidget = QtWidgets.QWidget(inputDialog)
+    verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 361, 241))
+    verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+    verticalLayout = QtWidgets.QVBoxLayout(verticalLayoutWidget)
+    verticalLayout.setContentsMargins(0, 0, 0, 0)
+    verticalLayout.setObjectName("verticalLayout")
+
+    label = QtWidgets.QLabel(verticalLayoutWidget)
+    font = QtGui.QFont()
+    font.setFamily("Microsoft YaHei UI")
+    font.setPointSize(11)
+    label.setFont(font)
+    label.setObjectName("label")
+    verticalLayout.addWidget(label)
+    lineEdit = QtWidgets.QLineEdit(verticalLayoutWidget)
+    lineEdit.setObjectName("lineEdit")
+    verticalLayout.addWidget(lineEdit)
+    line = QtWidgets.QFrame(verticalLayoutWidget)
+    line.setFrameShape(QtWidgets.QFrame.HLine)
+    line.setFrameShadow(QtWidgets.QFrame.Sunken)
+    line.setObjectName("line")
+    verticalLayout.addWidget(line)
+    label_2 = QtWidgets.QLabel(verticalLayoutWidget)
+    label_2.setFont(font)
+    label_2.setObjectName("label_2")
+    verticalLayout.addWidget(label_2)
+    textEdit = QtWidgets.QTextEdit(verticalLayoutWidget)
+    textEdit.setObjectName("textEdit")
+    textEdit.setAcceptRichText(False)
+    verticalLayout.addWidget(textEdit)
+
+    inputDialog.setWindowTitle("插入代码")
+    label.setText("语言（可选的）")
+    label_2.setText("代码")
+
+    def getCode():
+        rtValue = ["",""]
+        rtValue[0] = lineEdit.text()
+        rtValue[1] = textEdit.toPlainText()
+        if rtValue[1]:
+            callWid.addCode(*rtValue)
+            inputDialog.destroy()
+
+    buttonBox.accepted.connect(getCode)
+    buttonBox.rejected.connect(inputDialog.destroy)
+
+    inputDialog.show()
+
+def getMdLinkDialog(callWid):
+    from PyQt5 import QtWidgets, QtCore, QtGui
+
+    inputDialog = QtWidgets.QDialog()
+    inputDialog.setObjectName("Dialog")
+    inputDialog.resize(400, 300)
+    buttonBox = QtWidgets.QDialogButtonBox(inputDialog)
+    buttonBox.setGeometry(QtCore.QRect(30, 260, 341, 32))
+    buttonBox.setOrientation(QtCore.Qt.Horizontal)
+    buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+    buttonBox.setObjectName("buttonBox")
+
+    verticalLayoutWidget = QtWidgets.QWidget(inputDialog)
+    verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 361, 241))
+    verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+    verticalLayout = QtWidgets.QVBoxLayout(verticalLayoutWidget)
+    verticalLayout.setContentsMargins(0, 0, 0, 0)
+    verticalLayout.setObjectName("verticalLayout")
+
+    label = QtWidgets.QLabel(verticalLayoutWidget)
+    font = QtGui.QFont()
+    font.setFamily("Microsoft YaHei UI")
+    font.setPointSize(11)
+    label.setFont(font)
+    label.setObjectName("label")
+    verticalLayout.addWidget(label)
+    getLinkName = QtWidgets.QLineEdit(verticalLayoutWidget)
+    getLinkName.setObjectName("getLinkName")
+    getLinkName.setClearButtonEnabled(True)
+    verticalLayout.addWidget(getLinkName)
+    line = QtWidgets.QFrame(verticalLayoutWidget)
+    line.setFrameShape(QtWidgets.QFrame.HLine)
+    line.setFrameShadow(QtWidgets.QFrame.Sunken)
+    line.setObjectName("line")
+    verticalLayout.addWidget(line)
+    label_2 = QtWidgets.QLabel(verticalLayoutWidget)
+    label_2.setFont(font)
+    label_2.setObjectName("label_2")
+    verticalLayout.addWidget(label_2)
+    getLinkURL = QtWidgets.QLineEdit(verticalLayoutWidget)
+    getLinkURL.setObjectName("getLinkURL")
+    getLinkURL.setClearButtonEnabled(True)
+    verticalLayout.addWidget(getLinkURL)
+
+    inputDialog.setWindowTitle("插入链接")
+    label.setText("链接名称（可选的）")
+    label_2.setText("链接地址")
+
+    def insertLink():
+        rtValue = ["",""]
+        rtValue[0] = getLinkName.text()
+        rtValue[1] = getLinkURL.text()
+        if rtValue[1]:
+            callWid.addLink(*rtValue)
+            inputDialog.destroy()
+            
+    buttonBox.accepted.connect(insertLink)
+    buttonBox.rejected.connect(inputDialog.destroy)
+    
+    inputDialog.show()
+
+def getMdImageDialog(callWid):
+    from PyQt5 import QtWidgets, QtCore, QtGui
+    
+    inputDialog = QtWidgets.QDialog()
+    inputDialog.setObjectName("Dialog")
+    inputDialog.resize(400, 300)
+    buttonBox = QtWidgets.QDialogButtonBox(inputDialog)
+    buttonBox.setGeometry(QtCore.QRect(30, 260, 341, 32))
+    buttonBox.setOrientation(QtCore.Qt.Horizontal)
+    buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+    buttonBox.setObjectName("buttonBox")
+
+    verticalLayoutWidget = QtWidgets.QWidget(inputDialog)
+    verticalLayoutWidget.setGeometry(QtCore.QRect(20, 10, 361, 241))
+    verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+    verticalLayout = QtWidgets.QVBoxLayout(verticalLayoutWidget)
+    verticalLayout.setContentsMargins(0, 0, 0, 0)
+    verticalLayout.setObjectName("verticalLayout")
+
+    label = QtWidgets.QLabel(verticalLayoutWidget)
+    font = QtGui.QFont()
+    font.setFamily("Microsoft YaHei UI")
+    font.setPointSize(11)
+    label.setFont(font)
+    label.setObjectName("label")
+    verticalLayout.addWidget(label)
+    getImageURL = QtWidgets.QLineEdit(verticalLayoutWidget)
+    getImageURL.setObjectName("getImageURL")
+    getImageURL.setClearButtonEnabled(True)
+    verticalLayout.addWidget(getImageURL)
+    getImageButton = QtWidgets.QPushButton()
+    getImageButton.setObjectName("getImageButton")
+    getImageButton.setText("选择文件")
+    verticalLayout.addWidget(getImageButton)
+    line = QtWidgets.QFrame(verticalLayoutWidget)
+    line.setFrameShape(QtWidgets.QFrame.HLine)
+    line.setFrameShadow(QtWidgets.QFrame.Sunken)
+    line.setObjectName("line")
+    verticalLayout.addWidget(line)
+    label_2 = QtWidgets.QLabel(verticalLayoutWidget)
+    label_2.setFont(font)
+    label_2.setObjectName("label_2")
+    verticalLayout.addWidget(label_2)
+    getImageText = QtWidgets.QLineEdit(verticalLayoutWidget)
+    getImageText.setObjectName("getImageText")
+    getImageText.setClearButtonEnabled(True)
+    verticalLayout.addWidget(getImageText)
+
+    inputDialog.setWindowTitle("插入图片")
+    label.setText("图片路径")
+    label_2.setText("图片描述（可选的）")
+
+    def openImage():
+        get = QtWidgets.QFileDialog()
+        get.setWindowTitle("选择图片")
+        get.setWindowFilePath(".")
+        get.setNameFilters(['*.png', '*.jpg', '*.bmp', '*.gif'])
+
+        get.exec()
+        while 1:
+            if len(get.selectedFiles()):
+                getImageURL.setText(get.selectedFiles()[0])
+                return
+    
+    def insertImage():
+        path = getImageURL.text()
+        if os.path.isfile(path):
+            fType = os.path.splitext(path)[-1]
+            cPath = "./cache/%d%s"%(hash(path), fType)
+            shutil.copyfile(path, cPath)
+            
+            text = '<img src="%s" alt="%s" width=450 />'%(cPath, getImageText.text())
+            callWid.addImage(text)
+            inputDialog.destroy()
+        else:
+            QtWidgets.QMessageBox().warning(None, "警告", "%s不是支持的文件"%path)
+            log.warning('"%s" cannot be copied!'%path)
+    
+    getImageButton.clicked.connect(openImage)
+    buttonBox.accepted.connect(insertImage)
+    buttonBox.rejected.connect(inputDialog.destroy)
+
+    inputDialog.show()
