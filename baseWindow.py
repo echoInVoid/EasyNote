@@ -17,6 +17,7 @@ class UIBaseWindow(object):
         main_ = QMenu(menubar) # main page (1st menu)
         main_.setObjectName("main")
         main_.setTitle("主页")
+        main_.triggered.connect(oper.returnToMain)
         menubar.addAction(main_.menuAction())
         #edit
         edit = QMenu(menubar) # edit note (1st menu)
@@ -33,5 +34,15 @@ class UIBaseWindow(object):
         view.triggered.connect(lambda x: oper.viewAll())
         edit.addAction(view)
         menubar.addAction(edit.menuAction())
+        #file operation
+        file = QMenu(menubar)
+        file.setObjectName("file")
+        file.setTitle("本地文件")
+        importNote = QAction(self.baseWid)
+        importNote.setObjectName("importNote")
+        importNote.setText("导入笔记")
+        importNote.triggered.connect(oper.importNote)
+        file.addAction(importNote)
+        menubar.addAction(file.menuAction())
         # set as menubar
         self.baseWid.setMenuBar(menubar)

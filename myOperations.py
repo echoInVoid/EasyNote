@@ -2,6 +2,7 @@ import json
 import logging as log
 from shutil import copytree, rmtree
 import shutil
+import string
 import time
 import os
 from myWindows import *
@@ -181,6 +182,33 @@ def delNote(fileName):
             else:
                 delHistory(name['title'])
         rmtree(".\\notes\\%s"%fileName)
+
+def importNote():
+    from PyQt5.QtWidgets import QFileDialog, QMessageBox
+    path = QFileDialog.getExistingDirectory(None, "选择笔记", ".\\notes")
+    if (os.path.exists(path) and os.path.isdir(path+"\\images") and os.path.isfile(path+"\\note.json")):
+        try:
+            print(path)
+            with open(path+"\\note.json", 'r') as f:
+                data = json.loads(f.read())
+            if (type(data["text"])==str and type(data["time"]in [list, tuple] and type(data["title"])==str)):
+                if (len(data["time"])==9):
+                    pass
+                else:
+                    QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 a"%path)
+                    raise
+            else:
+                QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 b"%path)
+                raise
+        except:
+            QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 c"%path)
+        else:
+            shutil.copytree(path, ".\\notes\\%s"%os.path.split(path)[-1])
+            log.info("Imported %s as a note."%path)
+            QMessageBox().information(None, "提示", "导入成功")
+    else:
+        QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 d"%path)
+
 
 def getMdCodeDialog(callWid):
     from PyQt5 import QtWidgets, QtCore, QtGui
