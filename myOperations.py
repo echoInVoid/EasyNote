@@ -5,6 +5,7 @@ import shutil
 import string
 import time
 import os
+import zipfile
 from myWindows import *
 from settings import settings
 
@@ -209,6 +210,15 @@ def importNote():
     else:
         QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 d"%path)
 
+def exportNote(noteName):
+    from PyQt5.QtWidgets import QFileDialog, QMessageBox
+    target = QFileDialog.getSaveFileName(None, "选择导出路径", ".", "文件夹")
+    target = target[0]
+    src_dir = ".\\notes\\%s"%noteName
+    shutil.copytree(src_dir, target)
+
+    QMessageBox().information(None, "提示", "已将 %s 导出至 %s"%(noteName, target))
+    log.info("Exported %s to %s.", noteName, target)
 
 def getMdCodeDialog(callWid):
     from PyQt5 import QtWidgets, QtCore, QtGui

@@ -79,6 +79,11 @@ class UIViewAllWindow(object):
         self.delete.setObjectName("delete")
         self.delete.clicked.connect(self.delNote)
         self.operations.addWidget(self.delete)
+        # export button
+        self.export = QtWidgets.QPushButton(self.Widget)
+        self.export.setObjectName("export")
+        self.export.clicked.connect(self.exportNote)
+        self.operations.addWidget(self.export)
         # cancel button
         self.cancel = QtWidgets.QPushButton(self.Widget)
         self.cancel.setObjectName("cancel")
@@ -99,6 +104,7 @@ class UIViewAllWindow(object):
         self.review.setText(_translate("Widget", "复习"))
         self.reviewH.setText(_translate("Widget", "复习历史"))
         self.delete.setText(_translate("Widget", "删除"))
+        self.export.setText(_translate("Widget", "导出"))
         self.cancel.setText(_translate("Widget", "取消"))
 
     def updateList(self):
@@ -130,6 +136,11 @@ class UIViewAllWindow(object):
             oper.delNote(self.listWidget.selectedItems()[0].data(5))
             logging.info("Deleted note %s"%self.listWidget.selectedItems()[0].data(5))
             self.updateList()
+    
+    def exportNote(self):
+        if len(self.listWidget.selectedItems()) == 1:
+            oper.exportNote(self.listWidget.selectedItems()[0].data(5))
+            print(self.listWidget.selectedItems()[0].data(5))
 
     def kill(self):
         oper.returnToMain()
