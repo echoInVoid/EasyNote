@@ -3,6 +3,7 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 import myOperations as oper
 import markdown as md
+from note import Note
 from settings import settings
 
 
@@ -148,8 +149,8 @@ class UIWriteWindow(object):
     def accept(self):
         title = self.getTitle.text()
         text = self.getText.toPlainText()
-        if len(title) + len(text) != 0:
-            oper.save(title, text)
+        if len(title):
+            oper.save(Note(title, text, []))
             self.kill()
 
     def reject(self):

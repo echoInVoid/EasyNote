@@ -2,11 +2,10 @@ import json
 import logging as log
 from shutil import copytree, rmtree
 import shutil
-import string
 import time
 import os
-import zipfile
 from myWindows import *
+from note import Note
 from settings import settings
 
 def clearCache():
@@ -35,15 +34,15 @@ def readNotesList():
     
     return noteList
 
-def save(title:str, text:str, ctime=time.localtime(time.time())):
-    filename = "%s"%title
+def save(note: Note):
+    filename = "%s"%note.title
 
     if (not os.path.exists(".\\notes")):
         os.mkdir(".\\notes")
         log.warn("Folder '.\\notes' not found!")
         log.info("Created Folder '.\\notes' .")
     
-    contain = {"title": title, "text": text, "time": tuple(ctime)}
+    contain = note.toDict()
     
     if os.path.exists(".\\notes\\"+filename): rmtree(".\\notes\\"+filename)
     os.mkdir(".\\notes\\"+filename)
@@ -88,7 +87,8 @@ def viewFile(file):
         viewWid.show()
 
         with open(filepath+"\\note.json", 'r') as f:
-            viewWid.setFile(json.loads(f.read()))
+            note = Note(**json.loads(f.read()))
+            viewWid.setFile(note)
 
         return viewWid
 
@@ -107,7 +107,8 @@ def reviewNote(file):
         viewWid.show()
 
         with open(filepath+"\\note.json", 'r') as f:
-            viewWid.setupForm(json.loads(f.read()))
+            note = Note(**json.loads(f.read()))
+            viewWid.setupForm(note)
 
         return viewWid
 

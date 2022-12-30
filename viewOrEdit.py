@@ -4,6 +4,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import markdown as md
 
 import myOperations as oper
+from note import Note
 from settings import settings
 
 class UIEditWindow(object):
@@ -168,10 +169,10 @@ class UIEditWindow(object):
         else:
             self.editState.setText(_translate("EditWindow", "编辑: 禁用"))
 
-    def setFile(self, file):
+    def setFile(self, file: Note):
         self.file = file
-        self.getTitle.setText(file['title'])
-        self.getText.setPlainText(file['text'])
+        self.getTitle.setText(file.title)
+        self.getText.setPlainText(file.text)
             
     def kill(self):
         oper.returnToMain()
@@ -179,8 +180,8 @@ class UIEditWindow(object):
     def accept(self):
         title = self.getTitle.text()
         text = self.getText.toPlainText()
-        if len(title) + len(text) != 0:
-            oper.save(title, text)
+        if len(title) != 0:
+            oper.save(Note(title, text, []))
             self.kill()
 
     def reject(self):

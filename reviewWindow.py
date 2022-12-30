@@ -5,6 +5,8 @@ import markdown as md
 from random import random
 
 import jieba
+
+from note import Note
 jieba.set_dictionary('.\\dict.txt')
 jieba.setLogLevel(logging.INFO)
 import jieba.analyse
@@ -106,14 +108,14 @@ class UIReviewWindow(object):
         if len(word) <= 1: return False
         return True
 
-    def setupForm(self, file: dict):
+    def setupForm(self, file: Note):
         self.file = file
-        self.file['text'] = md.markdown(
-            self.file['text'],
+        self.file.text = md.markdown(
+            self.file.text,
             extensions=settings.markdownExt
         )
         
-        pureText = clean_html(self.file['text'])
+        pureText = clean_html(self.file.text)
 
         filecut = jieba.lcut(pureText)
         self.spaces = []
@@ -123,10 +125,10 @@ class UIReviewWindow(object):
         logging.debug(self.spaces)
 
         for i in range(len(self.spaces)):
-            self.file['text'] = self.file['text'].replace(self.spaces[i], "___%d___"%(i+1))
+            self.file.text = self.file.text.replace(self.spaces[i], "___%d___"%(i+1))
 
         richText = str(md.markdown(
-            self.file['text'],
+            self.file.text,
             extensions=settings.markdownExt
         ))
         self.text.setHtml(richText)
@@ -157,4 +159,4 @@ class UIReviewWindow(object):
         score = score / self.form.rowCount() * 10
         self.score.setText("分数：%d"%score)
         
-        oper.saveScore(self.file['title'], score, time.localtime(time.time()))
+        oper.saveScore(self.file.title, score, time.localtime(time.time()))
