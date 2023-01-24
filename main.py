@@ -39,7 +39,8 @@ print("加载完成")
 
 try:
     code = app.exec()
-    sys.exit(code)  
+    clearCache()
+    sys.exit(code)
 except Exception as e:
     import traceback as tb
     trace = tb.format_exc()

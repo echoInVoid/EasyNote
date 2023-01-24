@@ -1,19 +1,16 @@
 import logging
-import os
 from PyQt5 import QtCore, QtGui, QtWidgets
-import markdown as md
 
 import myOperations as oper
 from note import Note
 from settings import settings
+from units.editUnit import myEditUnit
 
 class UIEditWindow(object):
     def setupUi(self, EditWindow: QtWidgets.QWidget):
         self.EditWindow = EditWindow
         self.EditWindow.setObjectName("EditWindow")
         self.EditWindow.resize(*settings.windowSize)
-
-        self.canEdit = False
         
         #main layout
         self.verticalLayout = QtWidgets.QVBoxLayout(self.EditWindow)
@@ -60,72 +57,9 @@ class UIEditWindow(object):
         self.line.setObjectName("line")
         self.verticalLayout.addWidget(self.line)
 
-        #get title
-        self.getTitle = QtWidgets.QLineEdit(self.EditWindow)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.getTitle.sizePolicy().hasHeightForWidth())
-        self.getTitle.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei UI")
-        font.setPointSize(20)
-        self.getTitle.setFont(font)
-        self.getTitle.setMaxLength(40)
-        self.getTitle.setObjectName("getTitle")
-        self.getTitle.setReadOnly(not self.canEdit)
-        self.verticalLayout.addWidget(self.getTitle)
-
-        # a layout for all text inputing & previewing
-        self.texts = QtWidgets.QVBoxLayout()
-        self.texts.setObjectName("texts")
-
-        # contain control buttons
-        self.buttons = QtWidgets.QHBoxLayout()
-        self.buttons.setObjectName("buttons")
-        self.inImage = QtWidgets.QPushButton(self.EditWindow)
-        self.inImage.setObjectName("inImage")
-        self.inImage.clicked.connect(lambda x: oper.getMdImageDialog(self))
-        self.buttons.addWidget(self.inImage)
-        self.inCode = QtWidgets.QPushButton(self.EditWindow)
-        self.inCode.setObjectName("inCode")
-        self.inCode.clicked.connect(lambda x: oper.getMdCodeDialog(self))
-        self.buttons.addWidget(self.inCode)
-        self.inLink = QtWidgets.QPushButton(self.EditWindow)
-        self.inLink.setObjectName("inLink")
-        self.inLink.clicked.connect(lambda x: oper.getMdLinkDialog(self))
-        self.buttons.addWidget(self.inLink)
-        self.texts.addLayout(self.buttons)
-
-        # a layout for the input area & preview area
-        self.edit = QtWidgets.QHBoxLayout()
-        self.edit.setObjectName("edit")
-        # input area
-        self.getText = QtWidgets.QPlainTextEdit(self.EditWindow)
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei UI")
-        font.setPointSize(11)
-        self.getText.setFont(font)
-        self.getText.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.IBeamCursor))
-        self.getText.setAutoFillBackground(False)
-        self.getText.setObjectName("getText")
-        self.getText.setReadOnly(True)
-        self.getText.textChanged.connect(self.updatePreview)
-        self.edit.addWidget(self.getText)
-        # markdown preview
-        self.preview = QtWidgets.QTextBrowser(self.EditWindow)
-        font = QtGui.QFont()
-        font.setFamily("Microsoft YaHei UI")
-        font.setPointSize(11)
-        self.preview.setFont(font)
-        self.preview.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ArrowCursor))
-        self.preview.setOpenLinks(False)
-        self.preview.anchorClicked.connect(self.openLink)
-        self.preview.setObjectName("preview")
-        self.edit.addWidget(self.preview)
-
-        self.texts.addLayout(self.edit)
-        self.verticalLayout.addLayout(self.texts)
+        # editUnit
+        self.editUnit = myEditUnit(self.EditWindow)
+        self.verticalLayout.addWidget(self.editUnit)
 
         # dialog buttonbox
         self.buttonBox = QtWidgets.QDialogButtonBox(self.EditWindow)
@@ -152,34 +86,28 @@ class UIEditWindow(object):
         self.title.setText(_translate("EditWindow", "浏览&编辑笔记"))
         self.editState.setText(_translate("EditWindow", "编辑: 禁用"))
         self.switchEditButton.setText(_translate("EditWindow", "切换编辑"))
-        self.getTitle.setPlaceholderText(_translate("EditWindow", "编辑标题(40字符以下)"))
-        self.inImage.setText(_translate("EditWindow", "插入图片"))
-        self.inCode.setText(_translate("EditWindow", "插入代码"))
-        self.inLink.setText(_translate("EditWindow", "插入链接"))
-        self.getText.setPlaceholderText(_translate("EditWindow", "Markdown代码"))
-        self.preview.setPlaceholderText(_translate("EditWindow", "笔记预览"))
 
     def switchEdit(self):
-        self.canEdit = not self.canEdit
-        self.getText.setReadOnly(not self.canEdit)
+        self.editUnit.canEdit = not self.editUnit.canEdit
+        self.editUnit.getText.setReadOnly(not self.editUnit.canEdit)
 
         _translate = QtCore.QCoreApplication.translate
-        if self.canEdit:
+        if self.editUnit.canEdit:
             self.editState.setText(_translate("EditWindow", "编辑: 启用"))
         else:
             self.editState.setText(_translate("EditWindow", "编辑: 禁用"))
 
     def setFile(self, file: Note):
         self.file = file
-        self.getTitle.setText(file.title)
-        self.getText.setPlainText(file.text)
+        self.editUnit.getTitle.setText(file.title)
+        self.editUnit.getText.setPlainText(file.text)
             
     def kill(self):
         oper.returnToMain()
 
     def accept(self):
-        title = self.getTitle.text()
-        text = self.getText.toPlainText()
+        title = self.editUnit.getTitle.text()
+        text = self.editUnit.getText.toPlainText()
         if len(title) != 0:
             oper.save(Note(title, text, []))
             self.kill()
@@ -187,25 +115,3 @@ class UIEditWindow(object):
     def reject(self):
         logging.info("Save Canceled.")
         self.kill()
-
-    def updatePreview(self):
-        richText = str(md.markdown(
-            self.getText.toPlainText(),
-            extensions=settings.markdownExt
-        )).replace('\x0245', '\\').replace('\x03', '-')
-        self.preview.setHtml(richText)
-
-    def openLink(self, link: QtCore.QUrl):
-        os.system('start "" "%s"'%link.url())
-
-    def addCode(self, lang, code):
-        mdCode = "```{ .%s }\n%s\n```"%(lang, code)
-        self.getText.textCursor().insertText(mdCode)
-
-    def addImage(self, text):
-        self.getText.textCursor().insertText(text)
-
-    def addLink(self, name, url):
-        if url and name:
-            self.getText.textCursor().insertText("[%s](%s)"%(name, url))
-        else: self.getText.textCursor().insertText("<%s>"%(url))

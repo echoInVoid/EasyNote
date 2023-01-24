@@ -222,6 +222,8 @@ def exportNote(noteName):
     log.info("Exported %s to %s.", noteName, target)
 
 def getMdCodeDialog(callWid):
+    if not callWid.canEdit: return
+    
     from PyQt5 import QtWidgets, QtCore, QtGui
 
     inputDialog = QtWidgets.QDialog()
@@ -282,6 +284,8 @@ def getMdCodeDialog(callWid):
     inputDialog.show()
 
 def getMdLinkDialog(callWid):
+    if not callWid.canEdit: return
+
     from PyQt5 import QtWidgets, QtCore, QtGui
 
     inputDialog = QtWidgets.QDialog()
@@ -343,6 +347,8 @@ def getMdLinkDialog(callWid):
     inputDialog.show()
 
 def getMdImageDialog(callWid):
+    if not callWid.canEdit: return
+
     from PyQt5 import QtWidgets, QtCore, QtGui
     
     inputDialog = QtWidgets.QDialog()
@@ -398,7 +404,7 @@ def getMdImageDialog(callWid):
         get = QtWidgets.QFileDialog()
         get.setWindowTitle("选择图片")
         get.setWindowFilePath(".")
-        get.setNameFilters(['*.png', '*.jpg', '*.bmp', '*.gif'])
+        get.setNameFilters(["Images: (*.png *.jpg *.bmp *.gif)"])
 
         get.exec()
         while 1:
