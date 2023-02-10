@@ -27,7 +27,8 @@ class Settings():
             "markdown.extensions.attr_list", 
             "markdown.extensions.def_list", 
             "markdown.extensions.footnotes", 
-            "markdown.extensions.tables"
+            "markdown.extensions.tables",
+            "markdown.extensions.strikethrough"
         ]
 
         self.baseWid = None
