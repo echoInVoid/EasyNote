@@ -91,5 +91,5 @@ class UIMainWindow(object):
         self.time.display(time.strftime("%H:%M:%S"))
 
     def openHelp(self):
-        if os.path.isfile('..\\readme.html'):
-            os.system("..\\readme.html")
+        if os.path.isfile('.\\resource\\help.html'):
+            os.system(".\\resource\\help.html")
