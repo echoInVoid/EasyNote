@@ -2,18 +2,43 @@ import json
 import logging as log
 from shutil import copytree, rmtree
 import shutil
+import sys
 import time
 import os
 from myWindows import *
 from note import Note
 from settings import settings
 
+def logError(func):
+    """作为装饰器使用，将被装饰函数抛出的异常捕获并记录，然后退出"""
+    import functools
+    @functools.wraps(func)
+    def dec(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            log.basicConfig(
+                filename=settings.logFile, level=settings.logLevel, 
+                format="[%(asctime)s][%(levelname)s][%(filename)s:%(lineno)d]\n%(message)s", filemode='a', force=True
+                )
+            import traceback as tb
+            log.critical(f"------EASYNOTE CRASH LOG------\nTraceback below:\n{tb.format_exc()}")
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.warning(
+                QMessageBox(), "致命错误", 
+                f"程序发生了一个异常，即将退出。\n详情请查阅{os.path.abspath(settings.logFile)}中的日志。\n错误信息摘要：{str(e)}"
+                )
+            sys.exit(1)
+    return dec
+
+@logError
 def clearCache():
     if os.path.isdir(".\\cache"):
         rmtree(".\\cache")
         os.mkdir(".\\cache")
         log.info("Cleared cache.")
 
+@logError
 def readNotesList():
     noteList = []
 
@@ -34,6 +59,7 @@ def readNotesList():
     
     return noteList
 
+@logError
 def save(note: Note):
     filename = "%s"%note.title
 
@@ -57,10 +83,12 @@ def save(note: Note):
     log.info("Saved '%s' ."%filename)
     return 0
 
+@logError
 def setCurrentWid(widget):
     baseWid = settings.baseWid
     baseWid.setCentralWidget(widget)
 
+@logError
 def writeNote():
     baseWid = settings.baseWid
     writeWid = myWrite(baseWid)
@@ -68,6 +96,7 @@ def writeNote():
     writeWid.show()
     return writeWid
 
+@logError
 def viewAll():
     baseWid = settings.baseWid
     viewWid = myViewAll(baseWid)
@@ -75,6 +104,7 @@ def viewAll():
     viewWid.show()
     return viewWid
 
+@logError
 def viewFile(file):
     filepath = ".\\notes\\%s"%file.data(5)
     if os.path.exists(filepath):
@@ -96,6 +126,7 @@ def viewFile(file):
         log.error("File %s doesn't exist!"%filepath)
         return None
 
+@logError
 def reviewNote(file):
     filepath = ".\\notes\\%s"%file
     if os.path.exists(filepath):
@@ -116,6 +147,7 @@ def reviewNote(file):
         log.error("File %s doesn't exist!"%filepath)
         return None
 
+@logError
 def returnToMain():
     baseWid = settings.baseWid
     baseWid.centralWidget().destroy()
@@ -124,6 +156,7 @@ def returnToMain():
     mainWid.show()
     baseWid.show()
 
+@logError
 def saveScore(title: str, score: int, ctime):
     path = ".\\notes\\%s\\note.json"%title
     with open(path, 'r') as f:
@@ -136,6 +169,7 @@ def saveScore(title: str, score: int, ctime):
         j = json.dumps(a, sort_keys=True, indent=4, separators=(',', ':'))
         f.write(j)
 
+@logError
 def showScore(title):
     path = ".\\notes\\%s\\note.json"%title
     if not os.path.isfile(path):
@@ -158,6 +192,7 @@ def showScore(title):
     historyWid.show()
     return historyWid
 
+@logError
 def delHistory(title):
     path = ".\\notes\\%s\\note.json"%title
     if not os.path.isfile(path):
@@ -174,6 +209,7 @@ def delHistory(title):
         j = json.dumps(file, sort_keys=True, indent=4, separators=(',', ':'))
         f.write(j)
 
+@logError
 def delNote(fileName):
     if (os.path.isdir(".\\notes\\%s"%fileName)):
         with open(".\\notes\\%s\\note.json"%fileName, 'r') as f:
@@ -185,6 +221,7 @@ def delNote(fileName):
                 delHistory(name['title'])
         rmtree(".\\notes\\%s"%fileName)
 
+@logError
 def importNote():
     from PyQt5.QtWidgets import QFileDialog, QMessageBox
     path = QFileDialog.getExistingDirectory(None, "选择笔记", ".\\notes")
@@ -211,6 +248,7 @@ def importNote():
     else:
         QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 d"%path)
 
+@logError
 def exportNote(noteName):
     from PyQt5.QtWidgets import QFileDialog, QMessageBox
     target = QFileDialog.getSaveFileName(None, "选择导出路径", ".", "文件夹")
@@ -221,6 +259,7 @@ def exportNote(noteName):
     QMessageBox().information(None, "提示", "已将 %s 导出至 %s"%(noteName, target))
     log.info("Exported %s to %s.", noteName, target)
 
+@logError
 def getMdCodeDialog(callWid):
     if not callWid.canEdit: return
     
@@ -283,6 +322,7 @@ def getMdCodeDialog(callWid):
 
     inputDialog.show()
 
+@logError
 def getMdLinkDialog(callWid):
     if not callWid.canEdit: return
 
@@ -346,6 +386,7 @@ def getMdLinkDialog(callWid):
     
     inputDialog.show()
 
+@logError
 def getMdImageDialog(callWid):
     if not callWid.canEdit: return
 
@@ -401,16 +442,10 @@ def getMdImageDialog(callWid):
     label_2.setText("图片描述（可选的）")
 
     def openImage():
-        get = QtWidgets.QFileDialog()
-        get.setWindowTitle("选择图片")
-        get.setWindowFilePath(".")
-        get.setNameFilters(["Images: (*.png *.jpg *.bmp *.gif)"])
-
-        get.exec()
-        while 1:
-            if len(get.selectedFiles()):
-                getImageURL.setText(get.selectedFiles()[0])
-                return
+        filepath, filetype = QtWidgets.QFileDialog.getOpenFileName(None, "选择图片", ".", "Images: (*.png *.jpg *.bmp *.gif)")
+        
+        if len(filepath):
+            getImageURL.setText(filepath)
     
     def insertImage():
         path = getImageURL.text()

@@ -15,9 +15,14 @@ from myWindows import myMain
 bar.update(20)
 
 from settings import settings
+
 def setUp():
     if not os.path.isdir(".\\logs"): os.mkdir(".\\logs") 
-    log.basicConfig(filename='.\\logs\\%s.log'%time.strftime(r"%Y%m%d-%Hh-%Mm"), level=settings.logLevel, format=settings.LOG_FORMAT, filemode='w')
+    settings.logFile = '.\\logs\\%s.log'%time.strftime(r"%Y%m%d-%Hh-%Mm")
+    log.basicConfig(
+        filename=settings.logFile, level=settings.logLevel, 
+        format=settings.LOG_FORMAT, filemode='w', force=True
+        )
 
     log.info("Set-Up completed.")
     clearCache()

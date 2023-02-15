@@ -12,6 +12,7 @@ class Settings():
         self.infoDialogSize = [500,400]
         self.windowContentMargin = [20,20,20,20]
         self.logLevel = logging.INFO
+        self.logFile = ""
         
         self.reviewWordProbability = 0.2
         self.zhPuncs = '＂＃＄％＆＇（）＊＋，－／：；＜＝＞＠［＼］\
