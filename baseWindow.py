@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QMenu, QAction, QMenuBar
 from PyQt5.QtCore import QRect
+from PyQt5.QtGui import QIcon
 import myOperations as oper
 from settings import settings
 
@@ -8,6 +9,7 @@ class UIBaseWindow(object):
         self.baseWid = baseWid
         self.baseWid.resize(*settings.baseWindowSize)
         self.baseWid.setWindowTitle("EasyNote")
+        self.baseWid.setWindowIcon(QIcon(".\\resource\\icon.png"))
 
         #menubar
         menubar = QMenuBar(self.baseWid)
@@ -41,7 +43,7 @@ class UIBaseWindow(object):
         importNote = QAction(self.baseWid)
         importNote.setObjectName("importNote")
         importNote.setText("导入笔记")
-        importNote.triggered.connect(oper.importNote)
+        importNote.triggered.connect(lambda x: oper.importNote())
         file.addAction(importNote)
         menubar.addAction(file.menuAction())
         # set as menubar

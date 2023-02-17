@@ -14,6 +14,7 @@ def logError(func):
     import functools
     @functools.wraps(func)
     def dec(*args, **kwargs):
+        print(dec.__name__, args)
         try:
             return func(*args, **kwargs)
         except Exception as e:
