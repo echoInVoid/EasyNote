@@ -1,19 +1,9 @@
-import progressbar
-bar = progressbar.ProgressBar(maxval=100)
-print("加载中……")
-bar.start()
-
 import logging as log
 import sys
-
 from PyQt5.QtWidgets import QApplication
-bar.update(5)
 
 from myOperations import *
-bar.update(10)
 from myWindows import myMain
-bar.update(20)
-
 from settings import settings
 
 def setUp():
@@ -28,19 +18,14 @@ def setUp():
     clearCache()
 
 setUp()
-bar.update(25)
 
 app = QApplication(sys.argv)
 baseWid = myBase()
-bar.update(50)
 mainWid = myMain(baseWid)
 baseWid.setCentralWidget(mainWid)
-bar.update(70)
 settings.baseWid = baseWid
 mainWid.show()
 baseWid.show()
-bar.update(100)
-print("加载完成")
 
 try:
     code = app.exec()
