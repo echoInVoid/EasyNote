@@ -1,20 +1,21 @@
 import json
 import logging as log
-from shutil import copytree, rmtree
+import os
 import shutil
 import sys
-import time
-import os
+import zipfile as zpf
+from shutil import copytree, rmtree
+
 from myWindows import *
 from note import Note
 from settings import settings
+
 
 def logError(func):
     """作为装饰器使用，将被装饰函数抛出的异常捕获并记录，然后退出"""
     import functools
     @functools.wraps(func)
     def dec(*args, **kwargs):
-        print(dec.__name__, args)
         try:
             return func(*args, **kwargs)
         except Exception as e:
@@ -83,6 +84,29 @@ def save(note: Note):
     clearCache()
     log.info("Saved '%s' ."%filename)
     return 0
+
+@logError
+def zipNote(notePath, zipPath):
+    if (not os.path.isdir(notePath) or not os.path.isdir(os.path.join(notePath, 'images'))):
+        log.error("Zipnote failed. Invalid note path: %s", notePath)
+        return
+    elif (not os.path.isdir(os.path.dirname(zipPath))):
+        log.error("Zipnote failed. Invalid zip path: %s", zipPath)
+        return
+    
+    with zpf.ZipFile(zipPath, "w") as z:
+        arcRoot = os.path.split(notePath)[-1]
+        noteRoot = os.path.abspath(notePath)
+        z.write(noteRoot+"\\note.json", arcRoot+"\\note.json")
+
+        for f in os.listdir(noteRoot+"\\images"):
+            z.write(noteRoot+"\\images\\"+f, arcRoot+"\\images\\"+f)
+        if len(os.listdir(noteRoot+"\\images"))==0:
+            clearCache()
+            with open(".\\cache\\placeholder.txt", 'w') as f:
+                f.write("placeholder")
+            z.write(".\\cache\\placeholder.txt", arcRoot+"\\images\\placeholder.txt")
+    log.info("Successfully zipped %s to %s", notePath, zipPath)
 
 @logError
 def setCurrentWid(widget):
@@ -223,39 +247,75 @@ def delNote(fileName):
         rmtree(".\\notes\\%s"%fileName)
 
 @logError
+def isValidNotePath(path) -> bool:
+    flag = True
+    abspath = os.path.abspath(path)
+
+    # 检查文件夹结构
+    flag = flag and os.path.isdir(os.path.join(abspath, "images"))
+    flag = flag and os.path.isfile(os.path.join(abspath, "note.json"))
+    
+    # 检查note.json
+    try:
+        with open(os.path.join(abspath, "note.json"), "r") as f:
+            data = json.loads(f.read())
+        
+        flag = flag and type(data["text"])==str
+        flag = flag and (type(data["time"]) in [list, tuple])
+        flag = flag and type(data["title"]) == str
+        flag = flag and len(data["time"])==9
+    except:
+        flag = False
+        return flag
+
+    return flag
+
+@logError
 def importNote():
-    from PyQt5.QtWidgets import QFileDialog, QMessageBox
-    path = QFileDialog.getExistingDirectory(None, "选择笔记", ".\\notes")
-    if (os.path.exists(path) and os.path.isdir(path+"\\images") and os.path.isfile(path+"\\note.json")):
-        try:
-            print(path)
-            with open(path+"\\note.json", 'r') as f:
-                data = json.loads(f.read())
-            if (type(data["text"])==str and type(data["time"]in [list, tuple] and type(data["title"])==str)):
-                if (len(data["time"])==9):
-                    pass
-                else:
-                    QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 a"%path)
-                    raise
-            else:
-                QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 b"%path)
-                raise
-        except:
-            QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 c"%path)
+    from PyQt5.QtWidgets import QFileDialog, QMessageBox, QInputDialog
+    path = QFileDialog.getOpenFileName(None, "选择笔记", ".\\notes", "EasyNote笔记文件(*.ezn)")[0]
+    if (not os.path.isfile(path)):
+        log.warning("No such file: %s"%path)
+        return
+
+    clearCache()
+    with zpf.ZipFile(path, 'r') as z:
+        z.extractall(".\\cache")
+    noteName = os.listdir(".\\cache")[0]
+    if (not isValidNotePath(".\\cache\\"+noteName)):
+        QMessageBox.warning(None, "警告", "不合法的笔记！文件可能已损坏。\n%s"%path)
+        log.warning("Bad note file: %s"%noteName)
+        return
+
+    noteDir = ".\\notes\\"+noteName
+    while os.path.isdir(noteDir):
+        choice = QMessageBox.question(
+            None, "同名笔记",
+            "检测到当前笔记目录中存在与将要导入的笔记同名的笔记。点击 Yes 覆盖，点击 No 为将要导入的笔记重命名。"
+            )
+        if (choice==QMessageBox.Yes):
+            shutil.rmtree(noteDir)
         else:
-            shutil.copytree(path, ".\\notes\\%s"%os.path.split(path)[-1])
-            log.info("Imported %s as a note."%path)
-            QMessageBox().information(None, "提示", "导入成功")
-    else:
-        QMessageBox().warning(None, "警告", "%s 不是合法的笔记目录 d"%path)
+            name = QInputDialog.getText(None, "输入文件夹名", "提示，最简单的方式为在原名结尾处加上数字。", text=noteName)
+            if name[1]:
+                noteName = name[0]
+            noteDir = ".\\notes\\"+noteName
+
+    shutil.copytree(".\\cache\\"+os.listdir(".\\cache")[0], noteDir)
+    clearCache()
+    
+    QMessageBox.information(None, "导入成功", "已将 %s 导入到 %s。"%(path, noteDir))
+    log.info("Successfully imported %s from %s。"%(noteDir, path))
+
 
 @logError
 def exportNote(noteName):
     from PyQt5.QtWidgets import QFileDialog, QMessageBox
-    target = QFileDialog.getSaveFileName(None, "选择导出路径", ".", "文件夹")
+    target = QFileDialog.getSaveFileName(None, "选择导出路径", "%s.ezn"%noteName, "EasyNote笔记文件(*.ezn)")
     target = target[0]
+    if (len(target) == 0): return
     src_dir = ".\\notes\\%s"%noteName
-    shutil.copytree(src_dir, target)
+    zipNote(src_dir, target)
 
     QMessageBox().information(None, "提示", "已将 %s 导出至 %s"%(noteName, target))
     log.info("Exported %s to %s.", noteName, target)
@@ -264,7 +324,7 @@ def exportNote(noteName):
 def getMdCodeDialog(callWid):
     if not callWid.canEdit: return
     
-    from PyQt5 import QtWidgets, QtCore, QtGui
+    from PyQt5 import QtCore, QtGui, QtWidgets
 
     inputDialog = QtWidgets.QDialog()
     inputDialog.setObjectName("Dialog")
@@ -327,7 +387,7 @@ def getMdCodeDialog(callWid):
 def getMdLinkDialog(callWid):
     if not callWid.canEdit: return
 
-    from PyQt5 import QtWidgets, QtCore, QtGui
+    from PyQt5 import QtCore, QtGui, QtWidgets
 
     inputDialog = QtWidgets.QDialog()
     inputDialog.setObjectName("Dialog")
@@ -391,7 +451,7 @@ def getMdLinkDialog(callWid):
 def getMdImageDialog(callWid):
     if not callWid.canEdit: return
 
-    from PyQt5 import QtWidgets, QtCore, QtGui
+    from PyQt5 import QtCore, QtGui, QtWidgets
     
     inputDialog = QtWidgets.QDialog()
     inputDialog.setObjectName("Dialog")
