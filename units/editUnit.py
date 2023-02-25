@@ -182,7 +182,6 @@ class UIEditUnit():
         cursor = self.getText.textCursor()
         start = cursor.block().position()
         text = self.getText.toPlainText()
-        print(cursor.block().length()) 
         if (cursor.block().length()<=1): # 空行
             return
 
@@ -218,8 +217,9 @@ class UIEditUnit():
     def addImage(self, text):
         self.getText.textCursor().insertText(text)
 
-    def addLink(self, name, url):
+    def addLink(self, name: str, url: str):
         if url and name:
+            url = url if url.startswith("https://") or url.startswith("http://") else "http://"+url
             self.getText.textCursor().insertText("[%s](%s)"%(name, url))
         else: self.getText.textCursor().insertText("<%s>"%(url))
 

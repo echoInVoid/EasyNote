@@ -140,7 +140,7 @@ class UIViewAllWindow(object):
     def exportNote(self):
         if len(self.listWidget.selectedItems()) == 1:
             oper.exportNote(self.listWidget.selectedItems()[0].data(5))
-            print(self.listWidget.selectedItems()[0].data(5))
+            # print(self.listWidget.selectedItems()[0].data(5))
 
     def kill(self):
         oper.returnToMain()

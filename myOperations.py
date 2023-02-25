@@ -3,8 +3,12 @@ import logging as log
 import os
 import shutil
 import sys
+import time
+import markdown as md
+import pdfkit as pdf
 import zipfile as zpf
 from shutil import copytree, rmtree
+from hashlib import sha1
 
 from myWindows import *
 from note import Note
@@ -86,8 +90,8 @@ def save(note: Note):
     return 0
 
 @logError
-def zipNote(notePath, zipPath):
-    if (not os.path.isdir(notePath) or not os.path.isdir(os.path.join(notePath, 'images'))):
+def exportNoteToZip(notePath, zipPath):
+    if (not os.path.isdir(notePath) or not isValidNotePath(notePath)):
         log.error("Zipnote failed. Invalid note path: %s", notePath)
         return
     elif (not os.path.isdir(os.path.dirname(zipPath))):
@@ -107,6 +111,45 @@ def zipNote(notePath, zipPath):
                 f.write("placeholder")
             z.write(".\\cache\\placeholder.txt", arcRoot+"\\images\\placeholder.txt")
     log.info("Successfully zipped %s to %s", notePath, zipPath)
+
+@logError
+def exportNoteToPdf(notePath, pdfPath):
+    if (not os.path.isdir(notePath) or not isValidNotePath(notePath)):
+        log.error("Pdfnote failed. Invalid note path: %s", notePath)
+        return
+    elif (not os.path.isdir(os.path.dirname(pdfPath))):
+        log.error("Zipnote failed. Invalid pdf path: %s", pdfPath)
+        return
+    
+    clearCache()
+    imagePath = os.path.join(os.path.abspath(notePath), "images")
+    imageList = os.listdir(imagePath)
+    for i in imageList:
+        if os.path.isfile(imagePath+'\\'+i):
+            shutil.copyfile(imagePath+'\\'+i, ".\\cache\\%s"%i)
+
+    with open(notePath+"\\note.json", "r") as f:
+        noteJson = json.loads(f.read())
+    htmlStr = md.markdown(
+        "#%s\n##%s\n\n"%(noteJson["title"], time.strftime(r"%Y/%m/%d(%a) %H:%M", tuple(noteJson["time"]))) + noteJson["text"],
+        extensions=settings.markdownExt
+        )
+    htmlStr = """
+    <!DOCTYPE html>
+    <html>
+        <head>
+            <meta charset="utf-8"/>
+        </head>
+        <body>
+            %s
+        </body>
+    </html>
+    """%htmlStr
+    options = {"enable-local-file-access": True}
+    config = pdf.configuration(wkhtmltopdf=".\\resource\\wk\\wkhtmltopdf.exe")
+    pdf.from_string(htmlStr, pdfPath, configuration=config, options=options, css=".\\resource\\pdf.css")
+    log.info("Successfully PDFed %s to %s", notePath, pdfPath)
+    clearCache()
 
 @logError
 def setCurrentWid(widget):
@@ -307,18 +350,24 @@ def importNote():
     QMessageBox.information(None, "导入成功", "已将 %s 导入到 %s。"%(path, noteDir))
     log.info("Successfully imported %s from %s。"%(noteDir, path))
 
-
 @logError
 def exportNote(noteName):
     from PyQt5.QtWidgets import QFileDialog, QMessageBox
-    target = QFileDialog.getSaveFileName(None, "选择导出路径", "%s.ezn"%noteName, "EasyNote笔记文件(*.ezn)")
-    target = target[0]
-    if (len(target) == 0): return
-    src_dir = ".\\notes\\%s"%noteName
-    zipNote(src_dir, target)
+    target = QFileDialog.getSaveFileName(None, "选择导出路径", "%s.ezn"%noteName, "EasyNote笔记文件(*.ezn)\nPDF文件(*.pdf)")
+    if (len(target[0]) == 0): return
 
-    QMessageBox().information(None, "提示", "已将 %s 导出至 %s"%(noteName, target))
-    log.info("Exported %s to %s.", noteName, target)
+    src_dir = ".\\notes\\%s"%noteName
+    if ".ezn" in target[1]:
+        target = target[0]
+        exportNoteToZip(src_dir, target)
+
+        QMessageBox().information(None, "提示", "已将 %s 导出至 %s"%(noteName, target))
+        log.info("Exported %s to %s.", noteName, target)
+    elif ".pdf" in target[1]:
+        target = target[0]
+        exportNoteToPdf(src_dir, target)
+        QMessageBox().information(None, "提示", "已将 %s 导出至 %s"%(noteName, target))
+        log.info("Exported %s to %s.", noteName, target)
 
 @logError
 def getMdCodeDialog(callWid):
@@ -512,7 +561,10 @@ def getMdImageDialog(callWid):
         path = getImageURL.text()
         if os.path.isfile(path):
             fType = os.path.splitext(path)[-1]
-            cPath = "./cache/%d%s"%(hash(path), fType)
+            targetName = sha1()
+            targetName.update(path.encode("utf-8"))
+            targetName = targetName.hexdigest()
+            cPath = os.path.abspath("./cache/%s%s"%(targetName, fType))
             shutil.copyfile(path, cPath)
             
             text = '<img src="%s" alt="%s" width=450 />'%(cPath, getImageText.text())
