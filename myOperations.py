@@ -53,11 +53,13 @@ def readNotesList():
         return []
     
     for file in os.listdir(".\\notes"):
+        fDir = file
         file = ".\\notes\\%s\\note.json"%file
         if (os.path.isfile(file)):
             try:
                 with open(file, 'r') as f:
                     note = json.load(f)
+                note['dir'] = fDir
             except Exception as e:
                 log.error("%s is not a readable json file. Message: %s"%(file, str(e)))
             else:
@@ -174,7 +176,7 @@ def viewAll():
 
 @logError
 def viewFile(file):
-    filepath = ".\\notes\\%s"%file.data(5)
+    filepath = ".\\notes\\%s"%file
     if os.path.exists(filepath):
         clearCache()
         os.rmdir(".\\cache")

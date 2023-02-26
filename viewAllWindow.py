@@ -116,12 +116,12 @@ class UIViewAllWindow(object):
         for note in notes:
             if key in note['title']:
                 item = QtWidgets.QListWidgetItem(note['title'], self.listWidget)
-                filename = note['title']
+                filename = note['dir']
                 item.setData(5, filename)
 
     def openNote(self):
         if len(self.listWidget.selectedItems()) == 1:
-            oper.viewFile(self.listWidget.selectedItems()[0])
+            oper.viewFile(self.listWidget.selectedItems()[0].data(5))
 
     def reviewNote(self):
         if len(self.listWidget.selectedItems()) == 1:
