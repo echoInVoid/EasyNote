@@ -13,6 +13,7 @@ class Settings():
         self.windowContentMargin = [20,20,20,20]
         self.logLevel = logging.INFO
         self.logFile = ""
+        self.icon = ".\\resource\\icon.png"
         
         self.reviewWordProbability = 0.2
         self.zhPuncs = '＂＃＄％＆＇（）＊＋，－／：；＜＝＞＠［＼］\

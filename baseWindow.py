@@ -9,7 +9,7 @@ class UIBaseWindow(object):
         self.baseWid = baseWid
         self.baseWid.resize(*settings.baseWindowSize)
         self.baseWid.setWindowTitle("EasyNote")
-        self.baseWid.setWindowIcon(QIcon(".\\resource\\icon.png"))
+        self.baseWid.setWindowIcon(QIcon(settings.icon))
 
         #menubar
         menubar = QMenuBar(self.baseWid)

@@ -54,7 +54,7 @@ class UIMainWindow(object):
         #welcome picture
         self.welcomePic = QtWidgets.QLabel(self.MainWindow)
         self.welcomePic.setText("")
-        self.welcomePic.setPixmap(QtGui.QPixmap(".\\resource\\welcome.gif"))
+        self.welcomePic.setPixmap(QtGui.QPixmap(".\\resource\\welcome.png"))
         self.welcomePic.setScaledContents(True)
         self.welcomePic.setObjectName("welcomePic")
         self.welcomePic.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
